@@ -33,8 +33,8 @@ struct JoystickView: View {
                             self.joystickPosition = limitedPosition
                             
                             // X ve Y değerlerini hesapla
-                            let xValue = constrain(Int(limitedPosition.width / (size / 2) * 10), min: -100, max: 100)
-                            let yValue = constrain(Int(-limitedPosition.height / (size / 2) * 10), min: -100, max: 100)
+                            let xValue = constrain(Int(limitedPosition.width / (size / 2) * 100), min: -100, max: 100)
+                            let yValue = constrain(Int(-limitedPosition.height / (size / 2) * 100), min: -100, max: 100)
                             var joystickData = ""
                             // Motor hızlarını hesapla
                             switch type {

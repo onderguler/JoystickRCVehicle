@@ -91,7 +91,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         }
         
         // 100 milisaniyede bir çalışan timer
-        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             // Son joystick verisini gönder
             self.sendJoystickData(value: self.lastJoystickValue)
         }
