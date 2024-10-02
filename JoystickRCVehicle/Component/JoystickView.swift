@@ -23,7 +23,7 @@ struct JoystickView: View {
             // Joystick kontrolcü (thumb)
             Circle()
                 .fill(Color.blue)
-                .frame(width: size / 4, height: size / 4) // Thumb boyutunu çerçeve boyutuna göre ayarla
+                .frame(width: size / 5, height: size / 5) // Thumb boyutunu çerçeve boyutuna göre ayarla
                 .offset(joystickPosition)
                 .gesture(
                     DragGesture()
@@ -33,22 +33,22 @@ struct JoystickView: View {
                             self.joystickPosition = limitedPosition
                             
                             // X ve Y değerlerini hesapla
-                            let xValue = constrain(Int(limitedPosition.width / (size / 2) * 10), min: -10, max: 10)
-                            let yValue = constrain(Int(-limitedPosition.height / (size / 2) * 10), min: -10, max: 10)
+                            let xValue = constrain(Int(limitedPosition.width / (size / 2) * 10), min: -100, max: 100)
+                            let yValue = constrain(Int(-limitedPosition.height / (size / 2) * 10), min: -100, max: 100)
                             var joystickData = ""
                             // Motor hızlarını hesapla
                             switch type {
                             case .movement:
-                                let leftMotorSpeed = constrain(yValue + xValue, min: -9, max: 9)
-                                let rightMotorSpeed = constrain(yValue - xValue, min: -9, max: 9)
-                                 joystickData = "\(leftMotorSpeed),\(rightMotorSpeed)"
-
+                                let leftMotorSpeed = constrain(yValue + xValue, min: -99, max: 99)
+                                let rightMotorSpeed = constrain(yValue - xValue, min: -99, max: 99)
+                                joystickData = "\(leftMotorSpeed),\(rightMotorSpeed)"
+                                
                             case .turret:
-                                let leftMotorSpeed = constrain(-xValue, min: -9, max: 9)
-                                let rightMotorSpeed = constrain(yValue, min: -9, max: 9)
+                                let leftMotorSpeed = constrain(-xValue, min: -99, max: 99)
+                                let rightMotorSpeed = constrain(yValue, min: -99, max: 99)
                                 joystickData = "\(leftMotorSpeed),\(rightMotorSpeed)"                            }
-                           
-
+                            
+                            
                             // Arduino'ya verileri gönder
                             joyStickOnChange(joystickData)
                         }
