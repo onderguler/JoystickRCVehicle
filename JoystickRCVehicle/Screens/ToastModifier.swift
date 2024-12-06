@@ -1,3 +1,11 @@
+//
+//  ToastModifier.swift
+//  JoystickRCVehicle
+//
+//  Created by Onder Guler on 6.12.2024.
+//
+
+
 import SwiftUI
 
 struct ToastModifier: ViewModifier {

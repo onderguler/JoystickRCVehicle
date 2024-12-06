@@ -10,6 +10,12 @@ import CoreMotion
 
 struct ContentView: View {
     @State private var showingBluetoothDevices = false
+    @State private var showingInfoView = false
+    @State private var showToast = false
+    @State private var showMessage = "Connect to Bluetooth Device First"
+    
+
+    @State private var combinedData = ""
     var bluetoothManager = BluetoothManager()
     
     // Sol ve sağ joystick verilerini saklayan state
@@ -71,6 +77,22 @@ struct ContentView: View {
             VStack {
                 HStack {
                     Button(action: {
+                        showingInfoView = true
+                    }) {
+                        Image(systemName: "info.circle")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .padding()
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                            .foregroundColor(.white)
+                    }
+                    .sheet(isPresented: $showingInfoView) {
+                        InfoView()
+                    }
+
+                    Spacer()
+                    Button(action: {
                         showingBluetoothDevices = true  // Bluetooth cihaz listesini açar
                     }) {
                         Image(systemName: bluetoothManager.isConnected ?  "cable.connector" : "cable.connector.slash")
@@ -85,58 +107,13 @@ struct ContentView: View {
                         // Bluetooth cihaz listesini burada açabilirsiniz
                         BluetoothDeviceListView(bluetoothManager: bluetoothManager)
                     }
-                    
-                    // Lazer Butonu
-                    Button(action: {
-                        laserButtonValue = (laserButtonValue == "L") ? "l" : "L"
-                        updateAndSendCombinedJoystickData()
-                    }) {
-                        Text("Laser")
-                            .font(.title)
-                            .padding()
-                            .background(laserButtonValue == "L" ? Color.red : Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    
-                    // Ateş Butonu
-                    Button(action: {
-                        if fireButtonValue == "F" {
-                            fireButtonValue = "f"
-                            triggerButtonValue = "t"
-                        } else {
-                            fireButtonValue = "F"
-                        }
-                        updateAndSendCombinedJoystickData()
-                    }) {
-                        Text("Fire")
-                            .font(.title)
-                            .padding()
-                            .background(fireButtonValue == "F" ? Color.red : Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    
-                    // Tetik Butonu
-                    Button(action: {
-                        if triggerButtonValue == "T" {
-                            triggerButtonValue = "t"
-                        } else if fireButtonValue == "F" && triggerButtonValue == "t" {
-                            triggerButtonValue = "T"
-                        }
-                        updateAndSendCombinedJoystickData()
-                    }) {
-                        Text("Trigger")
-                            .font(.title)
-                            .padding()
-                            .background(triggerButtonValue == "T" ? Color.red : Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    
                     // Gyro Kontrol Butonu
                     Button(action: {
-                        toggleGyroUpdates()
+                        if bluetoothManager.isConnected {
+                            toggleGyroUpdates()
+                        } else {
+                            showToast = true
+                        }
                     }) {
                         Text("Gyro")
                             .font(.title)
@@ -147,7 +124,9 @@ struct ContentView: View {
                     }
                 }
             }
-            .padding(.horizontal, 10)
+            .padding(20)
+            Spacer()
+            Text("\(combinedData)")
             
             HStack {
                 // Sol joystick
@@ -157,19 +136,90 @@ struct ContentView: View {
                 }, type: .movement)
                 
                 Spacer()
-                
-                // Sağ joystick
-                JoystickView(size: 250, joyStickOnChange: { translation in
-                    rightJoystickValue = translation
-                    updateAndSendCombinedJoystickData()
-                }, type: .turret)
+                ZStack {
+                       JoystickView(size: 250, joyStickOnChange: { translation in
+                           rightJoystickValue = translation
+                           updateAndSendCombinedJoystickData()
+                       }, type: .turret)
+                       
+                       // Fire Button
+                       Button(action: {
+                           if bluetoothManager.isConnected {
+                               if fireButtonValue == "F" {
+                                   fireButtonValue = "f"
+                                   triggerButtonValue = "t"
+                               } else {
+                                   fireButtonValue = "F"
+                               }
+                               updateAndSendCombinedJoystickData()
+                           } else {
+                               showToast = true
+                           }
+                       }) {
+                           Image(systemName: "bolt.fill") // Uygun ikon
+                               .resizable()
+                               .frame(width: 40, height: 40)
+                               .padding()
+                               .background(fireButtonValue == "F" ? Color.red : Color.blue)
+                               .clipShape(Circle())
+                               .foregroundColor(.white)
+                       }
+                       .offset(x: -148, y: -80) // Sağ joystick'in sol üst köşesi için yerleşim
+                       
+                       // Trigger Button
+                       Button(action: {
+                           if bluetoothManager.isConnected {
+                               if triggerButtonValue == "T" {
+                                   triggerButtonValue = "t"
+                               } else if fireButtonValue == "F" && triggerButtonValue == "t" {
+                                   triggerButtonValue = "T"
+                               } else {
+                                   showMessage = "Enable the fire button first"
+                                   showToast = true
+                               }
+                               updateAndSendCombinedJoystickData()
+                           } else {
+                               showToast = true
+                           }
+                       }) {
+                           Image(systemName: "flame.fill") // Uygun ikon
+                               .resizable()
+                               .frame(width: 40, height: 40)
+                               .padding()
+                               .background(triggerButtonValue == "T" ? Color.red : Color.blue)
+                               .clipShape(Circle())
+                               .foregroundColor(.white)
+                       }
+                       .offset(x: -168, y: 0) // Sağ joystick'in sol üst köşesi için yerleşim
+                    // Laser Button
+                    Button(action: {
+                        if bluetoothManager.isConnected {
+                            laserButtonValue = (laserButtonValue == "L") ? "l" : "L"
+                            updateAndSendCombinedJoystickData()
+                        } else {
+                            showToast = true
+                        }
+                        
+                    }) {
+                        Image(systemName: "target") // Uygun ikon
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .padding()
+                            .background(laserButtonValue == "L" ? Color.red : Color.blue)
+                            .clipShape(Circle())
+                            .foregroundColor(.white)
+                    }
+                    .offset(x: -148, y: 80)
+                }
             }
-        }.padding()
+        }
+        .padding(.horizontal)
+        .toast(isPresented: $showToast, message: showMessage)
     }
     
     // Joystick verilerini birleştirip Bluetooth'a gönderir
     func updateAndSendCombinedJoystickData() {
-        let combinedData = "\(leftJoystickValue);\(rightJoystickValue);\(laserButtonValue)\(fireButtonValue)\(triggerButtonValue)"
+        combinedData = "\(leftJoystickValue);\(rightJoystickValue);\(laserButtonValue)\(fireButtonValue)\(triggerButtonValue)"
         bluetoothManager.updateJoystickValue(value: combinedData)
         debugPrint(combinedData)
     }
