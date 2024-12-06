@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreMotion
 
 struct ContentView: View {
     @State private var showingBluetoothDevices = false
@@ -14,18 +15,65 @@ struct ContentView: View {
     // Sol ve sağ joystick verilerini saklayan state
     @State private var leftJoystickValue = "0,0"  // Sol joystick
     @State private var rightJoystickValue = "0,0" // Sağ joystick
-    @State private var laserButtonValue = "l" // Sağ joystick
-    @State private var fireButtonValue = "f" // Sağ joystick
-    @State private var triggerButtonValue = "t" // Sağ joystick
-
+    @State private var laserButtonValue = "l" // Laser buton verisi
+    @State private var fireButtonValue = "f" // Fire buton verisi
+    @State private var triggerButtonValue = "t" // Trigger buton verisi
+    private let motionManager = CMMotionManager()
+    @State private var isControlling: Bool = false
+    @State private var accumulatedX: Double = 0.0
+    @State private var accumulatedY: Double = 0.0
+    
+    func toggleGyroUpdates() {
+        if isControlling {
+            stopGyroUpdates()
+        } else {
+            startGyroUpdates()
+        }
+        isControlling.toggle()
+    }
+    
+    private func startGyroUpdates() {
+        if motionManager.isGyroAvailable {
+            motionManager.gyroUpdateInterval = 0.1
+            motionManager.startGyroUpdates(to: OperationQueue.main) { data, error in
+                guard let gyroData = data else { return }
+                
+                // Rotation rate'i biriktirerek kullanıyoruz
+                let rotationRateX = gyroData.rotationRate.x * 100.0
+                let rotationRateY = gyroData.rotationRate.y * 100.0
+                
+                // Yeni pozisyonları önceki pozisyonlara ekleyerek biriktiriyoruz
+                accumulatedX += rotationRateX * 0.1 // Kümülatif birikim
+                accumulatedY += rotationRateY * 0.1 // Kümülatif birikim
+                
+                // Yeni değerleri sınırlandır
+                let xValue = constrain(Int(accumulatedX), min: -100, max: 100)
+                let yValue = constrain(Int(accumulatedY), min: -100, max: 100)
+                
+                // Joystick verilerini güncelle
+                rightJoystickValue = "\(xValue),\(yValue)"
+                updateAndSendCombinedJoystickData()
+            }
+        }
+    }
+    
+    private func stopGyroUpdates() {
+        motionManager.stopGyroUpdates()
+        
+        accumulatedX = 0.0
+        accumulatedY = 0.0
+        rightJoystickValue = "\(accumulatedX),\(accumulatedY)"
+        updateAndSendCombinedJoystickData()
+    }
+    
     var body: some View {
         VStack {
             VStack {
                 HStack {
                     Button(action: {
-                        self.showingBluetoothDevices = true  // Bluetooth cihaz listesini açar
+                        showingBluetoothDevices = true  // Bluetooth cihaz listesini açar
                     }) {
-                        Image(systemName:bluetoothManager.isConnected ?  "cable.connector" : "cable.connector.slash")
+                        Image(systemName: bluetoothManager.isConnected ?  "cable.connector" : "cable.connector.slash")
                             .resizable()
                             .frame(width: 40, height: 40)
                             .padding()
@@ -40,11 +88,7 @@ struct ContentView: View {
                     
                     // Lazer Butonu
                     Button(action: {
-                        if self.laserButtonValue == "L" {
-                            self.laserButtonValue = "l"
-                        } else {
-                            self.laserButtonValue = "L"
-                        }
+                        laserButtonValue = (laserButtonValue == "L") ? "l" : "L"
                         updateAndSendCombinedJoystickData()
                     }) {
                         Text("Laser")
@@ -57,14 +101,13 @@ struct ContentView: View {
                     
                     // Ateş Butonu
                     Button(action: {
-                        if self.fireButtonValue == "F" {
-                            self.fireButtonValue = "f"
-                            self.triggerButtonValue = "t"
+                        if fireButtonValue == "F" {
+                            fireButtonValue = "f"
+                            triggerButtonValue = "t"
                         } else {
-                            self.fireButtonValue = "F"
+                            fireButtonValue = "F"
                         }
                         updateAndSendCombinedJoystickData()
-                        
                     }) {
                         Text("Fire")
                             .font(.title)
@@ -73,20 +116,32 @@ struct ContentView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
-                    // Ateş Butonu
+                    
+                    // Tetik Butonu
                     Button(action: {
-                        if self.triggerButtonValue == "T" {
-                            self.triggerButtonValue = "t"
-                        } else if  fireButtonValue == "F" && triggerButtonValue == "t" {
-                            self.triggerButtonValue = "T"
+                        if triggerButtonValue == "T" {
+                            triggerButtonValue = "t"
+                        } else if fireButtonValue == "F" && triggerButtonValue == "t" {
+                            triggerButtonValue = "T"
                         }
                         updateAndSendCombinedJoystickData()
-                        
                     }) {
                         Text("Trigger")
                             .font(.title)
                             .padding()
                             .background(triggerButtonValue == "T" ? Color.red : Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    
+                    // Gyro Kontrol Butonu
+                    Button(action: {
+                        toggleGyroUpdates()
+                    }) {
+                        Text("Gyro")
+                            .font(.title)
+                            .padding()
+                            .background(isControlling ? Color.red : Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
@@ -97,25 +152,30 @@ struct ContentView: View {
             HStack {
                 // Sol joystick
                 JoystickView(size: 250, joyStickOnChange: { translation in
-                    // Sol joystick verisini güncelle
-                    self.leftJoystickValue = translation
-                    self.updateAndSendCombinedJoystickData()
+                    leftJoystickValue = translation
+                    updateAndSendCombinedJoystickData()
                 }, type: .movement)
+                
                 Spacer()
+                
                 // Sağ joystick
                 JoystickView(size: 250, joyStickOnChange: { translation in
-                    // Sağ joystick verisini güncelle
-                    self.rightJoystickValue = translation
-                    self.updateAndSendCombinedJoystickData()
+                    rightJoystickValue = translation
+                    updateAndSendCombinedJoystickData()
                 }, type: .turret)
             }
         }.padding()
     }
     
-    // Sol ve sağ joystick verilerini birleştirip Bluetooth'a gönderir
+    // Joystick verilerini birleştirip Bluetooth'a gönderir
     func updateAndSendCombinedJoystickData() {
-        
-        let combinedData = "\(leftJoystickValue)" + ";" + "\(rightJoystickValue)" + ";" + "\(laserButtonValue)" + "\(fireButtonValue)" + "\(triggerButtonValue)"
+        let combinedData = "\(leftJoystickValue);\(rightJoystickValue);\(laserButtonValue)\(fireButtonValue)\(triggerButtonValue)"
         bluetoothManager.updateJoystickValue(value: combinedData)
+        debugPrint(combinedData)
+    }
+    
+    // Gelen değerlerin sınırlandırılması
+    private func constrain(_ value: Int, min: Int, max: Int) -> Int {
+        return Swift.min(Swift.max(value, min), max)
     }
 }

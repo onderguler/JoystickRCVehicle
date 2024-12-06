@@ -80,7 +80,8 @@ struct JoystickView: View {
     }
     
     // Değerleri sınırlama fonksiyonu
-    private func constrain(_ value: Int, min: Int, max: Int) -> Int {
-        return Swift.max(min, Swift.min(max, value))
-    }
+   
+}
+public func constrain(_ value: Int, min: Int, max: Int) -> Int {
+    return Swift.max(min, Swift.min(max, value))
 }
