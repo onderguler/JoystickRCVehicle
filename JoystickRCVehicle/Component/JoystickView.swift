@@ -4,6 +4,7 @@
 //
 //  Created by Onder Guler on 24.09.2024.
 //
+
 import SwiftUI
 
 struct JoystickView: View {
@@ -15,9 +16,9 @@ struct JoystickView: View {
     
     var body: some View {
         ZStack {
-            // Joystick dış çemberi
-            Circle()
-                .fill(Color.gray.opacity(0.3))
+            // Joystick dış çerçeve (arka plan)
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.gray.opacity(0.01))
                 .frame(width: size, height: size)
             
             // Joystick kontrolcü (thumb)
@@ -36,6 +37,7 @@ struct JoystickView: View {
                             let xValue = constrain(Int(limitedPosition.width / (size / 2) * 100), min: -100, max: 100)
                             let yValue = constrain(Int(-limitedPosition.height / (size / 2) * 100), min: -100, max: 100)
                             var joystickData = ""
+                            
                             // Motor hızlarını hesapla
                             switch type {
                             case .movement:
@@ -46,8 +48,8 @@ struct JoystickView: View {
                             case .turret:
                                 let leftMotorSpeed = constrain(-xValue, min: -99, max: 99)
                                 let rightMotorSpeed = constrain(yValue, min: -99, max: 99)
-                                joystickData = "\(leftMotorSpeed),\(rightMotorSpeed)"                            }
-                            
+                                joystickData = "\(leftMotorSpeed),\(rightMotorSpeed)"
+                            }
                             
                             // Arduino'ya verileri gönder
                             joyStickOnChange(joystickData)
@@ -66,22 +68,19 @@ struct JoystickView: View {
         case turret
     }
     
-    // Joystick hareketini sınırlama fonksiyonu
+    // Joystick hareketini kare sınırlayıcıyla sınırlama fonksiyonu
     private func limitMovement(translation: CGSize) -> CGSize {
         let limit: CGFloat = size / 2 // Joystick yarıçapı
-        let length = sqrt(translation.width * translation.width + translation.height * translation.height)
         
-        if length > limit {
-            let scale = limit / length
-            return CGSize(width: translation.width * scale, height: translation.height * scale)
-        } else {
-            return translation
-        }
+        // X ve Y sınırlarını ayarla
+        let limitedWidth = min(max(translation.width, -limit), limit)
+        let limitedHeight = min(max(translation.height, -limit), limit)
+        
+        return CGSize(width: limitedWidth, height: limitedHeight)
     }
-    
-    // Değerleri sınırlama fonksiyonu
-   
 }
+
+// Değerleri sınırlama fonksiyonu
 public func constrain(_ value: Int, min: Int, max: Int) -> Int {
     return Swift.max(min, Swift.min(max, value))
 }
