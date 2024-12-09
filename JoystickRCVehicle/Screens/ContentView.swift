@@ -9,8 +9,12 @@ import SwiftUI
 import CoreMotion
 
 struct ContentView: View {
+    @AppStorage("isHapticFeedbackEnabled") private var isHapticFeedbackEnabled: Bool?
+    
     @State private var showingBluetoothDevices = false
     @State private var showingInfoView = false
+    @State private var showSettingsView = false
+    
     @State private var showToast = false
     @State private var showMessage = "Connect to Bluetooth Device First"
     
@@ -77,6 +81,9 @@ struct ContentView: View {
             VStack {
                 HStack {
                     Button(action: {
+                        if isHapticFeedbackEnabled ?? true {
+                            HapticFeedbackManager.shared.triggerImpact(style: .light)
+                        }
                         showingInfoView = true
                     }) {
                         Image(systemName: "info.circle")
@@ -88,18 +95,40 @@ struct ContentView: View {
                             .foregroundColor(.white)
                     }
                     .sheet(isPresented: $showingInfoView) {
+                      
                         InfoView()
+                    }
+                    
+                    Button(action: {
+                        if isHapticFeedbackEnabled ?? true {
+                            HapticFeedbackManager.shared.triggerImpact(style: .light)
+                        }
+                        showSettingsView = true
+                    }) {
+                        Image(systemName: "gear.circle")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .padding()
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                            .foregroundColor(.white)
+                    }
+                    .sheet(isPresented: $showSettingsView) {
+                        SettingsView()
                     }
 
                     Spacer()
                     Button(action: {
+                        if isHapticFeedbackEnabled ?? true {
+                            HapticFeedbackManager.shared.triggerImpact(style: .light)
+                        }
                         showingBluetoothDevices = true  // Bluetooth cihaz listesini açar
                     }) {
                         Image(systemName: bluetoothManager.isConnected ?  "cable.connector" : "cable.connector.slash")
                             .resizable()
                             .frame(width: 40, height: 40)
                             .padding()
-                            .background(bluetoothManager.isConnected ? Color.blue.opacity(0.7): .red.opacity(0.7))
+                            .background(bluetoothManager.isConnected ? Color.green: .red)
                             .clipShape(Circle())
                             .foregroundColor(.white)
                     }
@@ -109,9 +138,13 @@ struct ContentView: View {
                     }
                     // Gyro Kontrol Butonu
                     Button(action: {
+                        if isHapticFeedbackEnabled ?? true {
+                            HapticFeedbackManager.shared.triggerImpact(style: .light)
+                        }
                         if bluetoothManager.isConnected {
                             toggleGyroUpdates()
                         } else {
+                            showMessage = "Connect to Bluetooth Device First"
                             showToast = true
                         }
                     }) {
@@ -130,20 +163,18 @@ struct ContentView: View {
             
             HStack {
                 // Sol joystick
-                JoystickView(size: 250, joyStickOnChange: { translation in
-                    leftJoystickValue = translation
-                    updateAndSendCombinedJoystickData()
-                }, type: .movement)
                 
-                Spacer()
                 ZStack {
-                       JoystickView(size: 250, joyStickOnChange: { translation in
-                           rightJoystickValue = translation
-                           updateAndSendCombinedJoystickData()
-                       }, type: .turret)
+                    JoystickView(size: 250, joyStickOnChange: { translation in
+                        leftJoystickValue = translation
+                        updateAndSendCombinedJoystickData()
+                    }, type: .movement)
                        
                        // Fire Button
                        Button(action: {
+                           if isHapticFeedbackEnabled ?? true {
+                               HapticFeedbackManager.shared.triggerImpact(style: .light)
+                           }
                            if bluetoothManager.isConnected {
                                if fireButtonValue == "F" {
                                    fireButtonValue = "f"
@@ -153,6 +184,7 @@ struct ContentView: View {
                                }
                                updateAndSendCombinedJoystickData()
                            } else {
+                               showMessage = "Connect to Bluetooth Device First"
                                showToast = true
                            }
                        }) {
@@ -164,10 +196,13 @@ struct ContentView: View {
                                .clipShape(Circle())
                                .foregroundColor(.white)
                        }
-                       .offset(x: -148, y: -80) // Sağ joystick'in sol üst köşesi için yerleşim
+                       .offset(x: 148, y: -80) // Sağ joystick'in sol üst köşesi için yerleşim
                        
                        // Trigger Button
                        Button(action: {
+                           if isHapticFeedbackEnabled ?? true {
+                               HapticFeedbackManager.shared.triggerImpact(style: .light)
+                           }
                            if bluetoothManager.isConnected {
                                if triggerButtonValue == "T" {
                                    triggerButtonValue = "t"
@@ -179,6 +214,7 @@ struct ContentView: View {
                                }
                                updateAndSendCombinedJoystickData()
                            } else {
+                               showMessage = "Connect to Bluetooth Device First"
                                showToast = true
                            }
                        }) {
@@ -190,13 +226,17 @@ struct ContentView: View {
                                .clipShape(Circle())
                                .foregroundColor(.white)
                        }
-                       .offset(x: -168, y: 0) // Sağ joystick'in sol üst köşesi için yerleşim
+                       .offset(x: 168, y: 0) // Sağ joystick'in sol üst köşesi için yerleşim
                     // Laser Button
                     Button(action: {
+                        if isHapticFeedbackEnabled ?? true {
+                            HapticFeedbackManager.shared.triggerImpact(style: .light)
+                        }
                         if bluetoothManager.isConnected {
                             laserButtonValue = (laserButtonValue == "L") ? "l" : "L"
                             updateAndSendCombinedJoystickData()
                         } else {
+                            showMessage = "Connect to Bluetooth Device First"
                             showToast = true
                         }
                         
@@ -209,12 +249,18 @@ struct ContentView: View {
                             .clipShape(Circle())
                             .foregroundColor(.white)
                     }
-                    .offset(x: -148, y: 80)
+                    .offset(x: 148, y: 80)
                 }
+                Spacer()
+                JoystickView(size: 250, joyStickOnChange: { translation in
+                    rightJoystickValue = translation
+                    updateAndSendCombinedJoystickData()
+                }, type: .turret)
+                
             }
         }
         .padding(.horizontal)
-        .toast(isPresented: $showToast, message: showMessage)
+        .toast(isPresented: $showToast, message: $showMessage)
     }
     
     // Joystick verilerini birleştirip Bluetooth'a gönderir

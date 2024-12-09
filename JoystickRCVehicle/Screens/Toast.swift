@@ -15,7 +15,7 @@ struct Toast: View {
         Text(message)
             .font(.body)
             .padding()
-            .background(Color.black.opacity(0.8))
+            .background(Color.red.opacity(0.8))
             .foregroundColor(.white)
             .cornerRadius(10)
             .multilineTextAlignment(.center)

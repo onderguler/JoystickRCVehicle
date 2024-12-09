@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C7CD8A6F2D03449000C5C498 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CD8A6E2D03449000C5C498 /* FirebaseAnalytics */; };
+		C7CD8A712D03449000C5C498 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CD8A702D03449000C5C498 /* FirebaseCrashlytics */; };
+		C7CD8A732D03449000C5C498 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = C7CD8A722D03449000C5C498 /* FirebasePerformance */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C7A2DF5C2CA347FA00F3D13F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7CD8A6F2D03449000C5C498 /* FirebaseAnalytics in Frameworks */,
+				C7CD8A712D03449000C5C498 /* FirebaseCrashlytics in Frameworks */,
+				C7CD8A732D03449000C5C498 /* FirebasePerformance in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +121,9 @@
 			);
 			name = JoystickRCVehicle;
 			packageProductDependencies = (
+				C7CD8A6E2D03449000C5C498 /* FirebaseAnalytics */,
+				C7CD8A702D03449000C5C498 /* FirebaseCrashlytics */,
+				C7CD8A722D03449000C5C498 /* FirebasePerformance */,
 			);
 			productName = JoystickRCVehicle;
 			productReference = C7A2DF4B2CA347F900F3D13F /* JoystickRCVehicle.app */;
@@ -195,6 +207,9 @@
 			);
 			mainGroup = C7A2DF422CA347F900F3D13F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C7A2DF4C2CA347F900F3D13F /* Products */;
 			projectDirPath = "";
@@ -399,6 +414,8 @@
 				DEVELOPMENT_TEAM = WL9VHPS825;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Rc Car JoystickMaster";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Needs bluetooth connection to control your device";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Needs bluetooth connection to control your device";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -430,6 +447,8 @@
 				DEVELOPMENT_TEAM = WL9VHPS825;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Rc Car JoystickMaster";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Needs bluetooth connection to control your device";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Needs bluetooth connection to control your device";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -562,6 +581,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C7CD8A6E2D03449000C5C498 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		C7CD8A702D03449000C5C498 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		C7CD8A722D03449000C5C498 /* FirebasePerformance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebasePerformance;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C7A2DF432CA347F900F3D13F /* Project object */;
 }

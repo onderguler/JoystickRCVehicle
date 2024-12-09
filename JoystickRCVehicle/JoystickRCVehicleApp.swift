@@ -9,9 +9,23 @@ import SwiftUI
 
 @main
 struct JoystickRCVehicleApp: App {
+    @AppStorage("selectedTheme") private var selectedTheme: String?
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(getColorScheme())
+        }
+    }
+    // Function to determine the appropriate ColorScheme
+    private func getColorScheme() -> ColorScheme? {
+        switch selectedTheme {
+        case "Light":
+            return .light
+        case "Dark":
+            return .dark
+        default:
+            return nil
         }
     }
 }
