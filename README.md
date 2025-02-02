@@ -13,13 +13,13 @@ This project is a remote-controlled vehicle application built with Swift and Swi
 ## Screenshots
 
 ### **Control Information Screen**
-![Control Information Screen](Simulator-Screenshot-01.png)
+![Control Information Screen](info.png)
 
 ### **Settings Screen**
-![Settings Screen](Simulator-Screenshot-02.png)
+![Settings Screen](settings.png)
 
 ### **Main Control Interface**
-![Main Control Interface](Simulator-Screenshot-03.png)
+![Main Control Interface](main.png)
 
 > **Note:** Replace the image file names (e.g., `Simulator-Screenshot-01.png`) with the actual file paths in your GitHub repository.
 
