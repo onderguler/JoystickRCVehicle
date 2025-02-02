@@ -6,73 +6,65 @@
 //
 
 import SwiftUI
-
 struct InfoView: View {
     var body: some View {
         NavigationView {
             List {
                 // Control Information Title
-                Section(header: Text("Control Information").font(.largeTitle).bold()) {
-                    EmptyView() // Başlık için boş bir görünüm
+                Section(header: Text("control_information".localized).font(.largeTitle).bold()) {
+                    EmptyView()
                 }
-                
+
                 // Joystick Info
-                Section(header: Text("Joysticks")) {
+                Section(header: Text("joysticks".localized)) {
                     VStack(alignment: .leading) {
-                        Text("• Left Joystick:")
-                            .font(.headline)
-                        Text("  - Controls movement (forward, backward, left, right).")
-                        Text("  - Returns values between 0 and 99 for X and Y coordinates.")
+                        Text("left_joystick".localized).font(.headline)
+                        Text("left_joystick_desc1".localized)
+                        Text("left_joystick_desc2".localized)
                         
-                        Text("• Right Joystick:")
-                            .font(.headline)
-                        Text("  - Controls turret rotation (left, right, up, down).")
-                        Text("  - Returns values between 0 and 99 for X and Y coordinates.")
+                        Text("right_joystick".localized).font(.headline)
+                        Text("right_joystick_desc1".localized)
+                        Text("right_joystick_desc2".localized)
                     }
                 }
-                
+
                 // Button Info
-                Section(header: Text("Buttons")) {
+                Section(header: Text("buttons".localized)) {
                     VStack(alignment: .leading) {
-                        Text("• Laser Button:")
-                            .font(.headline)
-                        Text("  - Toggles laser on and off.")
-                        Text("  - Returns 'L' for ON and 'l' for OFF.")
+                        Text("laser_button".localized).font(.headline)
+                        Text("laser_button_desc1".localized)
+                        Text("laser_button_desc2".localized)
                         
-                        Text("• Fire Button:")
-                            .font(.headline)
-                        Text("  - Activates the fire mechanism.")
-                        Text("  - Returns 'F' for pressed and 'f' for released.")
+                        Text("fire_button".localized).font(.headline)
+                        Text("fire_button_desc1".localized)
+                        Text("fire_button_desc2".localized)
                         
-                        Text("• Trigger Button:")
-                            .font(.headline)
-                        Text("  - Works in combination with the Fire button for precise control.")
-                        Text("  - Returns 'T' for pressed and 't' for released.")
+                        Text("trigger_button".localized).font(.headline)
+                        Text("trigger_button_desc1".localized)
+                        Text("trigger_button_desc2".localized)
                     }
                 }
-                
+
                 // Gyro Info
-                Section(header: Text("Gyro Control")) {
+                Section(header: Text("gyro_control".localized)) {
                     VStack(alignment: .leading) {
-                        Text("• Gyro Control:")
-                            .font(.headline)
-                        Text("  - Enables device motion-based control.")
-                        Text("  - Updates the right joystick values based on rotation rate.")
+                        Text("gyro_control".localized).font(.headline)
+                        Text("gyro_control_desc1".localized)
+                        Text("gyro_control_desc2".localized)
                     }
                 }
-                
+
                 // Bluetooth Info
-                Section(header: Text("Bluetooth Connection")) {
+                Section(header: Text("bluetooth_connection".localized)) {
                     VStack(alignment: .leading) {
-                        Text("• Bluetooth Connection:")
-                            .font(.headline)
-                        Text("  - Connects to the tank for remote control.")
-                        Text("  - Status: 'Connected' or 'Disconnected'.")
+                        Text("bluetooth_connection".localized).font(.headline)
+                        Text("bluetooth_connection_desc1".localized)
+                        Text("bluetooth_connection_desc2".localized)
                     }
                 }
             }
-            .listStyle(InsetGroupedListStyle()) // iOS 14+ için modern liste stili
-            .navigationTitle("Info")
+            .listStyle(InsetGroupedListStyle())
+            .navigationTitle("info_title".localized)
         }
     }
 }

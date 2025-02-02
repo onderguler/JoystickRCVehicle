@@ -16,7 +16,7 @@ struct ContentView: View {
     @State private var showSettingsView = false
     
     @State private var showToast = false
-    @State private var showMessage = "Connect to Bluetooth Device First"
+    @State private var showMessage = "connect_bluetooth_first".localized
     
 
     @State private var combinedData = ""
@@ -32,7 +32,8 @@ struct ContentView: View {
     @State private var isControlling: Bool = false
     @State private var accumulatedX: Double = 0.0
     @State private var accumulatedY: Double = 0.0
-    
+    @State private var doubleValue: CGSize = .zero
+        
     func toggleGyroUpdates() {
         if isControlling {
             stopGyroUpdates()
@@ -144,11 +145,11 @@ struct ContentView: View {
                         if bluetoothManager.isConnected {
                             toggleGyroUpdates()
                         } else {
-                            showMessage = "Connect to Bluetooth Device First"
+                            showMessage = "connect_bluetooth_first".localized
                             showToast = true
                         }
                     }) {
-                        Text("Gyro")
+                        Text("gyro".localized)
                             .font(.title)
                             .padding()
                             .background(isControlling ? Color.red : Color.blue)
@@ -165,7 +166,8 @@ struct ContentView: View {
                 // Sol joystick
                 
                 ZStack {
-                    JoystickView(size: 250, joyStickOnChange: { translation in
+                    JoystickView(size: 250, joyStickOnChange: { translation, doubleValue in
+                        
                         leftJoystickValue = translation
                         updateAndSendCombinedJoystickData()
                     }, type: .movement)
@@ -184,7 +186,7 @@ struct ContentView: View {
                                }
                                updateAndSendCombinedJoystickData()
                            } else {
-                               showMessage = "Connect to Bluetooth Device First"
+                               showMessage = "connect_bluetooth_first".localized
                                showToast = true
                            }
                        }) {
@@ -209,12 +211,12 @@ struct ContentView: View {
                                } else if fireButtonValue == "F" && triggerButtonValue == "t" {
                                    triggerButtonValue = "T"
                                } else {
-                                   showMessage = "Enable the fire button first"
+                                   showMessage = "enable_fire_button_first".localized
                                    showToast = true
                                }
                                updateAndSendCombinedJoystickData()
                            } else {
-                               showMessage = "Connect to Bluetooth Device First"
+                               showMessage = "connect_bluetooth_first".localized
                                showToast = true
                            }
                        }) {
@@ -229,6 +231,7 @@ struct ContentView: View {
                        .offset(x: 168, y: 0) // Sağ joystick'in sol üst köşesi için yerleşim
                     // Laser Button
                     Button(action: {
+                        fatalError()
                         if isHapticFeedbackEnabled ?? true {
                             HapticFeedbackManager.shared.triggerImpact(style: .light)
                         }
@@ -236,7 +239,7 @@ struct ContentView: View {
                             laserButtonValue = (laserButtonValue == "L") ? "l" : "L"
                             updateAndSendCombinedJoystickData()
                         } else {
-                            showMessage = "Connect to Bluetooth Device First"
+                            showMessage = "connect_bluetooth_first".localized
                             showToast = true
                         }
                         
@@ -252,7 +255,9 @@ struct ContentView: View {
                     .offset(x: 148, y: 80)
                 }
                 Spacer()
-                JoystickView(size: 250, joyStickOnChange: { translation in
+                
+                JoystickView(joystickPosition: doubleValue, size: 250, joyStickOnChange: { translation, doubleValue in
+                    self.doubleValue = doubleValue
                     rightJoystickValue = translation
                     updateAndSendCombinedJoystickData()
                 }, type: .turret)

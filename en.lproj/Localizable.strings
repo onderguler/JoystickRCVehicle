@@ -1,0 +1,63 @@
+/* 
+  Localizable.strings
+  JoystickRCVehicle
+
+  Created by Onder Guler on 1.02.2025.
+  
+*/
+
+"bluetooth_unavailable" = "Bluetooth is not available.";
+"device_connected" = "Connected to: %@";
+"device_disconnected" = "Device disconnected.";
+"write_characteristic_missing" = "Writable characteristic not found.";
+"connected_device_missing" = "No connected device found.";
+"bluetooth_powered_off" = "Bluetooth is turned off.";
+"bluetooth_unauthorized" = "Bluetooth usage is unauthorized.";
+"bluetooth_unsupported" = "This device does not support Bluetooth.";
+"unknown_bluetooth_state" = "Unknown Bluetooth state.";
+"bluetooth_devices" = "Bluetooth Devices";
+"connect_bluetooth_first" = "Connect to Bluetooth Device First";
+"gyro" = "Gyro";
+"enable_fire_button_first" = "Enable the fire button first";
+"control_information" = "Control Information";
+"joysticks" = "Joysticks";
+"left_joystick" = "• Left Joystick:";
+"left_joystick_desc1" = "  - Controls movement (forward, backward, left, right).";
+"left_joystick_desc2" = "  - Returns values between 0 and 99 for X and Y coordinates.";
+"right_joystick" = "• Right Joystick:";
+"right_joystick_desc1" = "  - Controls turret rotation (left, right, up, down).";
+"right_joystick_desc2" = "  - Returns values between 0 and 99 for X and Y coordinates.";
+"buttons" = "Buttons";
+"laser_button" = "• Laser Button:";
+"laser_button_desc1" = "  - Toggles laser on and off.";
+"laser_button_desc2" = "  - Returns 'L' for ON and 'l' for OFF.";
+"fire_button" = "• Fire Button:";
+"fire_button_desc1" = "  - Activates the fire mechanism.";
+"fire_button_desc2" = "  - Returns 'F' for pressed and 'f' for released.";
+"trigger_button" = "• Trigger Button:";
+"trigger_button_desc1" = "  - Works in combination with the Fire button for precise control.";
+"trigger_button_desc2" = "  - Returns 'T' for pressed and 't' for released.";
+"gyro_control" = "Gyro Control";
+"gyro_control_desc1" = "  - Enables device motion-based control.";
+"gyro_control_desc2" = "  - Updates the right joystick values based on rotation rate.";
+"bluetooth_connection" = "Bluetooth Connection";
+"bluetooth_connection_desc1" = "  - Connects to the tank for remote control.";
+"bluetooth_connection_desc2" = "  - Status: 'Connected' or 'Disconnected'.";
+"info_title" = "Info";
+"bluetooth" = "Bluetooth";
+"enable_bluetooth" = "Enable Bluetooth";
+"control_settings" = "Control Settings";
+"control_sensitivity" = "Control Sensitivity";
+"current_sensitivity" = "Current Sensitivity: %d";
+"enable_haptic_feedback" = "Enable Haptic Feedback";
+"appearance" = "Appearance";
+"select_theme" = "Select Theme";
+"theme_light" = "Light";
+"theme_dark" = "Dark";
+"theme_system_default" = "System Default";
+"about" = "About";
+"app_name" = "Rc Car JoystickMaster";
+"app_version" = "Version: %@";
+"developed_by" = "Developed by Onder Guler";
+"settings" = "Settings";
+"no_devices_found" = "No Bluetooth devices found.";

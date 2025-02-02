@@ -8,19 +8,21 @@
 import SwiftUI
 
 struct JoystickView: View {
-    @State private var joystickPosition = CGSize.zero
+    @State var joystickPosition = CGSize.zero
     
     var size: CGFloat = 250 // Joystick çerçeve boyutunu 250 yap
-    var joyStickOnChange: (String) -> Void
+    var joyStickOnChange: (String, CGSize) -> Void
     var type: JoystickDataType = .movement
     
     var body: some View {
         ZStack {
             // Joystick dış çerçeve (arka plan)
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.01))
+                .fill(Color.gray.opacity(0.00))
                 .frame(width: size, height: size)
-            
+            Circle()
+                .fill(Color.gray.opacity(0.05))
+                .frame(width: size, height: size)
             // Joystick kontrolcü (thumb)
             Circle()
                 .fill(Color.blue)
@@ -52,12 +54,14 @@ struct JoystickView: View {
                             }
                             
                             // Arduino'ya verileri gönder
-                            joyStickOnChange(joystickData)
+                            joyStickOnChange(joystickData, limitedPosition)
                         }
                         .onEnded { _ in
                             // Joystick sıfırlama
-                            self.joystickPosition = .zero
-                            joyStickOnChange("0,0") // Motor hızlarını sıfırla
+                            if type == .movement {
+                                self.joystickPosition = .zero
+                                joyStickOnChange("0,0", self.joystickPosition) // Motor hızlarını sıfırla
+                            }
                         }
                 )
         }

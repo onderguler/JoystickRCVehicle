@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct JoystickRCVehicleApp: App {
     @AppStorage("selectedTheme") private var selectedTheme: String?
-    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
     var body: some Scene {
         WindowGroup {
             ContentView()

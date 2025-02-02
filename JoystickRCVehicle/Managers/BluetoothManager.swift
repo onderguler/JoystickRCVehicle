@@ -23,14 +23,20 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     
     // Merkezi Bluetooth yöneticisinin durumu değiştiğinde çağrılır
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
-            // Bluetooth açık, cihazları aramaya başla
+        switch central.state {
+        case .poweredOn:
             central.scanForPeripherals(withServices: nil, options: nil)
-        } else {
-            print("Bluetooth kullanılabilir değil.")
+        case .poweredOff:
+            print("bluetooth_powered_off".localized)
+        case .unauthorized:
+            print("bluetooth_unauthorized".localized)
+        case .unsupported:
+            print( "bluetooth_unsupported".localized)
+        default:
+            print("unknown_bluetooth_state".localized)
         }
     }
-    
+
     // Cihaz bulunduğunda tetiklenir
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         if !peripherals.contains(peripheral) {
@@ -48,7 +54,6 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     
     // Bağlantı başarılı olduğunda tetiklenir
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        print("Bağlandı: \(peripheral.name ?? "Bilinmeyen cihaz")")
         startSendingJoystickData()
         isConnected = true
         peripheral.discoverServices(nil)  // Tüm servisleri keşfet
@@ -108,28 +113,21 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         // Joystick'ten gelen veriyi kaydet
         lastJoystickValue = value
     }
-        
-    private func sendJoystickData(value: String) {
-        // Yazılabilir karakteristiğin olup olmadığını kontrol et
+    
+    func sendJoystickData(value: String) {
         guard let characteristic = writableCharacteristic else {
-            print("Yazılabilir karakteristik bulunamadı.")
+            print("write_characteristic_missing".localized)
             return
         }
 
-        // Bağlı periferik cihazın mevcut olup olmadığını kontrol et
         guard let connectedPeripheral = connectedPeripheral else {
-            print("Bağlı periferik cihaz bulunamadı.")
+            print( "connected_device_missing".localized)
             return
         }
-        
-        // String değerini karakter dizisine çevir
-        let tmpValue = value + "\n"
-       
-        let data = Data(tmpValue.utf8)
-        print(data)
-        print(tmpValue)
-        // Bluetooth karakteristiğine veri yaz
+
+        let data = Data((value + "\n").utf8)
         connectedPeripheral.writeValue(data, for: characteristic, type: .withResponse)
     }
 
+    
 }

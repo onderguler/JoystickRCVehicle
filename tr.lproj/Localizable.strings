@@ -1,0 +1,63 @@
+/* 
+  Localizable.strings
+  JoystickRCVehicle
+
+  Created by Onder Guler on 1.02.2025.
+  
+*/
+
+"bluetooth_unavailable" = "Bluetooth kullanılabilir değil.";
+"device_connected" = "Bağlandı: %@";
+"device_disconnected" = "Cihaz bağlantısı kesildi.";
+"write_characteristic_missing" = "Yazılabilir karakteristik bulunamadı.";
+"connected_device_missing" = "Bağlı periferik cihaz bulunamadı.";
+"bluetooth_powered_off" = "Bluetooth kapalı.";
+"bluetooth_unauthorized" = "Bluetooth kullanımı yetkisiz.";
+"bluetooth_unsupported" = "Bu cihaz Bluetooth'u desteklemiyor.";
+"unknown_bluetooth_state" = "Bilinmeyen Bluetooth durumu.";
+"bluetooth_devices" = "Bluetooth Cihazları";
+"connect_bluetooth_first" = "Önce Bluetooth cihazına bağlanın";
+"gyro" = "Jiroskop";
+"enable_fire_button_first" = "Önce ateş etme düğmesini etkinleştirin";
+"control_information" = "Kontrol Bilgileri";
+"joysticks" = "Joystikler";
+"left_joystick" = "• Sol Joystick:";
+"left_joystick_desc1" = "  - Hareketi kontrol eder (ileri, geri, sola, sağa).";
+"left_joystick_desc2" = "  - X ve Y koordinatları için 0 ile 99 arasında değer döner.";
+"right_joystick" = "• Sağ Joystick:";
+"right_joystick_desc1" = "  - Kule dönüşünü kontrol eder (sola, sağa, yukarı, aşağı).";
+"right_joystick_desc2" = "  - X ve Y koordinatları için 0 ile 99 arasında değer döner.";
+"buttons" = "Düğmeler";
+"laser_button" = "• Lazer Düğmesi:";
+"laser_button_desc1" = "  - Lazerin açılıp kapanmasını kontrol eder.";
+"laser_button_desc2" = "  - Açık için 'L', kapalı için 'l' döner.";
+"fire_button" = "• Ateş Düğmesi:";
+"fire_button_desc1" = "  - Ateş mekanizmasını etkinleştirir.";
+"fire_button_desc2" = "  - Basıldığında 'F', bırakıldığında 'f' döner.";
+"trigger_button" = "• Tetik Düğmesi:";
+"trigger_button_desc1" = "  - Hassas kontrol için Ateş düğmesiyle birlikte çalışır.";
+"trigger_button_desc2" = "  - Basıldığında 'T', bırakıldığında 't' döner.";
+"gyro_control" = "Jiroskop Kontrolü";
+"gyro_control_desc1" = "  - Cihaz hareketine dayalı kontrolü etkinleştirir.";
+"gyro_control_desc2" = "  - Dönüş hızına bağlı olarak sağ joystick değerlerini günceller.";
+"bluetooth_connection" = "Bluetooth Bağlantısı";
+"bluetooth_connection_desc1" = "  - Uzaktan kontrol için tank ile bağlantı sağlar.";
+"bluetooth_connection_desc2" = "  - Durum: 'Bağlı' veya 'Bağlantı kesildi'.";
+"info_title" = "Bilgi";
+"bluetooth" = "Bluetooth";
+"enable_bluetooth" = "Bluetooth'u Etkinleştir";
+"control_settings" = "Kontrol Ayarları";
+"control_sensitivity" = "Kontrol Hassasiyeti";
+"current_sensitivity" = "Mevcut Hassasiyet: %d";
+"enable_haptic_feedback" = "Haptik Geri Bildirimi Etkinleştir";
+"appearance" = "Görünüm";
+"select_theme" = "Tema Seçin";
+"theme_light" = "Açık";
+"theme_dark" = "Koyu";
+"theme_system_default" = "Sistem Varsayılanı";
+"about" = "Hakkında";
+"app_name" = "Rc Araba JoystickMaster";
+"app_version" = "Sürüm: %@";
+"developed_by" = "Geliştirici: Onder Guler";
+"settings" = "Ayarlar";
+"no_devices_found" = "Hiçbir Bluetooth cihazı bulunamadı.";

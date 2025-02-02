@@ -19,63 +19,63 @@ struct SettingsView: View {
         NavigationView {
             List {
                 // Bluetooth Settings
-                Section(header: Text("Bluetooth")) {
-                    Toggle("Enable Bluetooth", isOn: $isBluetoothEnabled)
+                Section(header: Text("bluetooth".localized)) {
+                    Toggle("enable_bluetooth".localized, isOn: $isBluetoothEnabled)
                         .onChange(of: isBluetoothEnabled) { newValue in
                             // Handle Bluetooth enable/disable action here
                         }
                 }
                 
                 // Control Sensitivity
-                Section(header: Text("Control Settings")) {
+                Section(header: Text("control_settings".localized)) {
                     VStack(alignment: .leading) {
-                        Text("Control Sensitivity")
+                        Text("control_sensitivity".localized)
                         Slider(value: $controlSensitivity, in: 1...100, step: 1)
-                        Text("Current Sensitivity: \(Int(controlSensitivity))")
+                        Text(String(format: "current_sensitivity".localized, Int(controlSensitivity)))
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
-                    Toggle("Enable Haptic Feedback", isOn: $isHapticFeedbackEnabled)
+                    Toggle("enable_haptic_feedback".localized, isOn: $isHapticFeedbackEnabled)
                 }
                 
                 // Theme Settings
-                Section(header: Text("Appearance")) {
-                    Picker("Select Theme", selection: $selectedTheme) {
-                        Text("Light").tag("Light")
-                        Text("Dark").tag("Dark")
-                        Text("System Default").tag("System")
+                Section(header: Text("appearance".localized)) {
+                    Picker("select_theme".localized, selection: $selectedTheme) {
+                        Text("theme_light".localized).tag("Light")
+                        Text("theme_dark".localized).tag("Dark")
+                        Text("theme_system_default".localized).tag("System")
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
                 
                 // About Section
-                Section(header: Text("About")) {
+                Section(header: Text("about".localized)) {
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("Rc Car JoystickMaster")
+                        Text("app_name".localized)
                             .font(.headline)
-                        Text("Version: \(Bundle.main.appVersion).\(Bundle.main.buildNumber)")
+                        Text(String(format: "app_version".localized, "\(Bundle.main.appVersion).\(Bundle.main.buildNumber)"))
                             .font(.subheadline)
                             .foregroundColor(.gray)
-                        Text("Developed by Onder Guler")
+                        Text("developed_by".localized)
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                 }
             }
             .listStyle(InsetGroupedListStyle())
-            .navigationTitle("Settings")
+            .navigationTitle("settings".localized)
             .preferredColorScheme(getColorScheme())
         }
-        
     }
+    
     private func getColorScheme() -> ColorScheme? {
-            switch selectedTheme {
-            case "Light":
-                return .light
-            case "Dark":
-                return .dark
-            default:
-                return nil // System default
-            }
+        switch selectedTheme {
+        case "Light":
+            return .light
+        case "Dark":
+            return .dark
+        default:
+            return nil // System default
         }
+    }
 }

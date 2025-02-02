@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C7CD8A6F2D03449000C5C498 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CD8A6E2D03449000C5C498 /* FirebaseAnalytics */; };
-		C7CD8A712D03449000C5C498 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CD8A702D03449000C5C498 /* FirebaseCrashlytics */; };
-		C7CD8A732D03449000C5C498 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = C7CD8A722D03449000C5C498 /* FirebasePerformance */; };
+		C7CC15E02D4E8B5300814406 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C7CC15DE2D4E8B5300814406 /* Localizable.strings */; };
+		C7CC15E72D4E931400814406 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15E62D4E931400814406 /* FirebaseAnalytics */; };
+		C7CC15E92D4E931400814406 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15E82D4E931400814406 /* FirebaseCore */; };
+		C7CC15EB2D4E931400814406 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15EA2D4E931400814406 /* FirebaseCrashlytics */; };
+		C7CC15ED2D4E931400814406 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15EC2D4E931400814406 /* FirebasePerformance */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +35,8 @@
 		C7A2DF4B2CA347F900F3D13F /* JoystickRCVehicle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JoystickRCVehicle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A2DF5B2CA347FA00F3D13F /* JoystickRCVehicleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoystickRCVehicleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A2DF652CA347FA00F3D13F /* JoystickRCVehicleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoystickRCVehicleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7CC15DF2D4E8B5300814406 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C7CC15E12D4E8B5E00814406 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,9 +62,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7CD8A6F2D03449000C5C498 /* FirebaseAnalytics in Frameworks */,
-				C7CD8A712D03449000C5C498 /* FirebaseCrashlytics in Frameworks */,
-				C7CD8A732D03449000C5C498 /* FirebasePerformance in Frameworks */,
+				C7CC15EB2D4E931400814406 /* FirebaseCrashlytics in Frameworks */,
+				C7CC15E92D4E931400814406 /* FirebaseCore in Frameworks */,
+				C7CC15ED2D4E931400814406 /* FirebasePerformance in Frameworks */,
+				C7CC15E72D4E931400814406 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +89,7 @@
 		C7A2DF422CA347F900F3D13F = {
 			isa = PBXGroup;
 			children = (
+				C7CC15DE2D4E8B5300814406 /* Localizable.strings */,
 				C7A2DF4D2CA347F900F3D13F /* JoystickRCVehicle */,
 				C7A2DF5E2CA347FA00F3D13F /* JoystickRCVehicleTests */,
 				C7A2DF682CA347FA00F3D13F /* JoystickRCVehicleUITests */,
@@ -111,6 +117,7 @@
 				C7A2DF472CA347F900F3D13F /* Sources */,
 				C7A2DF482CA347F900F3D13F /* Frameworks */,
 				C7A2DF492CA347F900F3D13F /* Resources */,
+				C7CC15F22D4E977000814406 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -121,9 +128,10 @@
 			);
 			name = JoystickRCVehicle;
 			packageProductDependencies = (
-				C7CD8A6E2D03449000C5C498 /* FirebaseAnalytics */,
-				C7CD8A702D03449000C5C498 /* FirebaseCrashlytics */,
-				C7CD8A722D03449000C5C498 /* FirebasePerformance */,
+				C7CC15E62D4E931400814406 /* FirebaseAnalytics */,
+				C7CC15E82D4E931400814406 /* FirebaseCore */,
+				C7CC15EA2D4E931400814406 /* FirebaseCrashlytics */,
+				C7CC15EC2D4E931400814406 /* FirebasePerformance */,
 			);
 			productName = JoystickRCVehicle;
 			productReference = C7A2DF4B2CA347F900F3D13F /* JoystickRCVehicle.app */;
@@ -204,11 +212,12 @@
 			knownRegions = (
 				en,
 				Base,
+				tr,
 			);
 			mainGroup = C7A2DF422CA347F900F3D13F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				C7CC15E52D4E931400814406 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C7A2DF4C2CA347F900F3D13F /* Products */;
@@ -227,6 +236,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7CC15E02D4E8B5300814406 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +255,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C7CC15F22D4E977000814406 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C7A2DF472CA347F900F3D13F /* Sources */ = {
@@ -282,6 +317,18 @@
 			targetProxy = C7A2DF662CA347FA00F3D13F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C7CC15DE2D4E8B5300814406 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C7CC15DF2D4E8B5300814406 /* en */,
+				C7CC15E12D4E8B5E00814406 /* tr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		C7A2DF6D2CA347FA00F3D13F /* Debug */ = {
@@ -343,6 +390,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -399,6 +447,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -408,10 +457,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"JoystickRCVehicle/Preview Content\"";
-				DEVELOPMENT_TEAM = WL9VHPS825;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WL9VHPS825;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Rc Car JoystickMaster";
@@ -430,6 +481,8 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onderguler.JoystickRCVehicle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = com.onderguler.JoystickRCVehicle;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -441,10 +494,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"JoystickRCVehicle/Preview Content\"";
-				DEVELOPMENT_TEAM = WL9VHPS825;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WL9VHPS825;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Rc Car JoystickMaster";
@@ -463,6 +518,8 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onderguler.JoystickRCVehicle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = com.onderguler.JoystickRCVehicle;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -583,30 +640,35 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		C7CC15E52D4E931400814406 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.6.0;
+				minimumVersion = 11.7.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C7CD8A6E2D03449000C5C498 /* FirebaseAnalytics */ = {
+		C7CC15E62D4E931400814406 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C7CC15E52D4E931400814406 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
 		};
-		C7CD8A702D03449000C5C498 /* FirebaseCrashlytics */ = {
+		C7CC15E82D4E931400814406 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C7CC15E52D4E931400814406 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		C7CC15EA2D4E931400814406 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C7CC15E52D4E931400814406 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
 		};
-		C7CD8A722D03449000C5C498 /* FirebasePerformance */ = {
+		C7CC15EC2D4E931400814406 /* FirebasePerformance */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C7CD8A6D2D03449000C5C498 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C7CC15E52D4E931400814406 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebasePerformance;
 		};
 /* End XCSwiftPackageProductDependency section */
