@@ -12,6 +12,7 @@
 		C7CC15E92D4E931400814406 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15E82D4E931400814406 /* FirebaseCore */; };
 		C7CC15EB2D4E931400814406 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15EA2D4E931400814406 /* FirebaseCrashlytics */; };
 		C7CC15ED2D4E931400814406 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = C7CC15EC2D4E931400814406 /* FirebasePerformance */; };
+		C7CC16252D53CBB200814406 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C7CC16232D53CBB200814406 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +38,8 @@
 		C7A2DF652CA347FA00F3D13F /* JoystickRCVehicleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoystickRCVehicleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7CC15DF2D4E8B5300814406 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C7CC15E12D4E8B5E00814406 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C7CC16242D53CBB200814406 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C7CC16262D53CBB500814406 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -89,6 +92,7 @@
 		C7A2DF422CA347F900F3D13F = {
 			isa = PBXGroup;
 			children = (
+				C7CC16232D53CBB200814406 /* InfoPlist.strings */,
 				C7CC15DE2D4E8B5300814406 /* Localizable.strings */,
 				C7A2DF4D2CA347F900F3D13F /* JoystickRCVehicle */,
 				C7A2DF5E2CA347FA00F3D13F /* JoystickRCVehicleTests */,
@@ -237,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7CC15E02D4E8B5300814406 /* Localizable.strings in Resources */,
+				C7CC16252D53CBB200814406 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +331,15 @@
 				C7CC15E12D4E8B5E00814406 /* tr */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		C7CC16232D53CBB200814406 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C7CC16242D53CBB200814406 /* en */,
+				C7CC16262D53CBB500814406 /* tr */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -468,11 +482,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Rc Car JoystickMaster";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Needs bluetooth connection to control your device";
-				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Needs bluetooth connection to control your device";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -504,11 +519,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Rc Car JoystickMaster";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Needs bluetooth connection to control your device";
-				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Needs bluetooth connection to control your device";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

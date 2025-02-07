@@ -6,7 +6,10 @@
 //
 
 import SwiftUI
+
 struct InfoView: View {
+    @Environment(\.presentationMode) private var presentationMode
+
     var body: some View {
         NavigationView {
             List {
@@ -65,6 +68,12 @@ struct InfoView: View {
             }
             .listStyle(InsetGroupedListStyle())
             .navigationTitle("info_title".localized)
+            .navigationBarItems(trailing: Button(action: {
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "xmark")
+                    .foregroundColor(.primary)
+            })
         }
     }
 }

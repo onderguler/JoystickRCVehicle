@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  JoystickRCVehicle
+
+  Created by Onder Guler on 5.02.2025.
+  
+*/
+
+"NSBluetoothPeripheralUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";;
+
+"NSBluetoothAlwaysUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";

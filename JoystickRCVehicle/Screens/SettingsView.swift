@@ -5,7 +5,6 @@
 //  Created by Onder Guler on 6.12.2024.
 //
 
-
 import SwiftUI
 
 struct SettingsView: View {
@@ -14,27 +13,14 @@ struct SettingsView: View {
 
     @State private var controlSensitivity: Double = 50
     @State private var isBluetoothEnabled: Bool = true
+
+    @Environment(\.presentationMode) private var presentationMode
     
     var body: some View {
         NavigationView {
             List {
-                // Bluetooth Settings
-                Section(header: Text("bluetooth".localized)) {
-                    Toggle("enable_bluetooth".localized, isOn: $isBluetoothEnabled)
-                        .onChange(of: isBluetoothEnabled) { newValue in
-                            // Handle Bluetooth enable/disable action here
-                        }
-                }
-                
                 // Control Sensitivity
                 Section(header: Text("control_settings".localized)) {
-                    VStack(alignment: .leading) {
-                        Text("control_sensitivity".localized)
-                        Slider(value: $controlSensitivity, in: 1...100, step: 1)
-                        Text(String(format: "current_sensitivity".localized, Int(controlSensitivity)))
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
                     Toggle("enable_haptic_feedback".localized, isOn: $isHapticFeedbackEnabled)
                 }
                 
@@ -64,6 +50,12 @@ struct SettingsView: View {
             }
             .listStyle(InsetGroupedListStyle())
             .navigationTitle("settings".localized)
+            .navigationBarItems(trailing: Button(action: {
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "xmark")
+                    .foregroundColor(.primary)
+            })
             .preferredColorScheme(getColorScheme())
         }
     }

@@ -10,7 +10,7 @@ import SwiftUI
 struct BluetoothDeviceListView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @Environment(\.dismiss) var dismiss  // Daha modern modal kontrolü
-
+    
     var body: some View {
         NavigationView {
             if bluetoothManager.peripherals.isEmpty {
