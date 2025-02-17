@@ -231,7 +231,6 @@ struct ContentView: View {
                        .offset(x: 168, y: 0) // Sağ joystick'in sol üst köşesi için yerleşim
                     // Laser Button
                     Button(action: {
-                        fatalError()
                         if isHapticFeedbackEnabled ?? true {
                             HapticFeedbackManager.shared.triggerImpact(style: .light)
                         }
