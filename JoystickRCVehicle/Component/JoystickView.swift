@@ -14,6 +14,9 @@ struct JoystickView: View {
     var joyStickOnChange: (String, CGSize) -> Void
     var type: JoystickDataType = .movement
     
+    // Add state to track if we should reset
+    @State private var shouldResetOnTouch: Bool = true
+    @State var touchOffset: CGPoint?
     var body: some View {
         ZStack {
             // Joystick dış çerçeve (arka plan)
@@ -29,10 +32,14 @@ struct JoystickView: View {
                 .frame(width: size / 5, height: size / 5) // Thumb boyutunu çerçeve boyutuna göre ayarla
                 .offset(joystickPosition)
                 .gesture(
-                    DragGesture()
+                    DragGesture(minimumDistance: 0) // Allow immediate movement
                         .onChanged { value in
                             // Joystick pozisyonunu sınırlayıp hareket ettirelim
-                            let limitedPosition = limitMovement(translation: value.translation)
+                            touchOffset = CGPoint(
+                                x: value.location.x - (size / 10),
+                                y: value.location.y - (size / 10)
+                            )
+                            let limitedPosition = limitMovement(translation: touchOffset ?? .zero)
                             self.joystickPosition = limitedPosition
                             
                             // X ve Y değerlerini hesapla
@@ -73,12 +80,12 @@ struct JoystickView: View {
     }
     
     // Joystick hareketini kare sınırlayıcıyla sınırlama fonksiyonu
-    private func limitMovement(translation: CGSize) -> CGSize {
+    private func limitMovement(translation: CGPoint) -> CGSize {
         let limit: CGFloat = size / 2 // Joystick yarıçapı
         
         // X ve Y sınırlarını ayarla
-        let limitedWidth = min(max(translation.width, -limit), limit)
-        let limitedHeight = min(max(translation.height, -limit), limit)
+        let limitedWidth = min(max(translation.x, -limit), limit)
+        let limitedHeight = min(max(translation.y, -limit), limit)
         
         return CGSize(width: limitedWidth, height: limitedHeight)
     }
