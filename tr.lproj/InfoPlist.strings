@@ -8,3 +8,4 @@
 
 "NSBluetoothPeripheralUsageDescription" = "Bluetooth erişimi, yakındaki cihazlara bağlanmak ve onları uzaktan kontrol etmek, örneğin bir oyuncak veya aracı kontrol etmek için gereklidir.";
 "NSBluetoothAlwaysUsageDescription" = "Bluetooth erişimi, yakındaki cihazlara bağlanmak ve onları uzaktan kontrol etmek, örneğin bir oyuncak veya aracı kontrol etmek için gereklidir.";
+"NSLocalNetworkUsageDescription" = "RC aracınıza yerel Wi-Fi ağı üzerinden bağlanmak için yerel ağ erişimi gereklidir.";

@@ -6,6 +6,7 @@
   
 */
 
-"NSBluetoothPeripheralUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";;
+"NSBluetoothPeripheralUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";
 
 "NSBluetoothAlwaysUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";
+"NSLocalNetworkUsageDescription" = "Local network access is required to connect to your RC vehicle over Wi-Fi.";
