@@ -1,4 +1,4 @@
-# JoystickRCVehicle
+# RC Joystick: WiFi and BLE
 
 SwiftUI ile gelistirilen bu iOS uygulamasi, ayni tank kontrol arayuzunu Bluetooth veya Wi-Fi UDP uzerinden kullanir. Baglanti modu ana ekrandan secilir ve uygulama yeniden acildiginda korunur.
 

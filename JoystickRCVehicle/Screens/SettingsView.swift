@@ -20,6 +20,10 @@ struct SettingsView: View {
             List {
                 // Control Sensitivity
                 Section(header: Text("control_settings".localized)) {
+                    NavigationLink(destination: CommandValuesInfoView()) {
+                        Label("sent_values".localized, systemImage: "arrow.left.arrow.right")
+                            .accessibilityIdentifier("sentValuesNavigationLink")
+                    }
                     sensitivityControl(
                         title: "movement_sensitivity".localized,
                         value: $movementSensitivity,

@@ -25,6 +25,7 @@ final class JoystickRCVehicleUITests: XCTestCase {
     @MainActor
     func testControlSurfaceAndSettings() throws {
         let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         XCUIDevice.shared.orientation = .landscapeLeft
         app.launch()
 
@@ -55,6 +56,11 @@ final class JoystickRCVehicleUITests: XCTestCase {
         app.buttons["settingsButton"].tap()
         XCTAssertTrue(app.sliders["movementSensitivitySlider"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.sliders["turretSensitivitySlider"].exists)
+
+        let sentValuesLink = app.staticTexts["Sent Values"]
+        XCTAssertTrue(sentValuesLink.waitForExistence(timeout: 3))
+        sentValuesLink.tap()
+        XCTAssertTrue(app.navigationBars["Sent Values"].waitForExistence(timeout: 3))
     }
 
     @MainActor

@@ -6,7 +6,7 @@
   
 */
 
-"NSBluetoothPeripheralUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";
-
-"NSBluetoothAlwaysUsageDescription" = "Bluetooth access is required to connect to nearby devices and control them remotely, such as controlling a toy or vehicle.";
-"NSLocalNetworkUsageDescription" = "Local network access is required to connect to your RC vehicle over Wi-Fi.";
+"CFBundleDisplayName" = "RC Joystick: WiFi and BLE";
+"NSBluetoothPeripheralUsageDescription" = "Bluetooth access lets this app find and connect to your compatible RC vehicle. For example, moving a joystick sends driving and turret commands to the selected vehicle.";
+"NSBluetoothAlwaysUsageDescription" = "Bluetooth access lets this app find and connect to your compatible RC vehicle. For example, moving a joystick sends driving and turret commands to the selected vehicle.";
+"NSLocalNetworkUsageDescription" = "Local network access is used to connect to your RC vehicle's Wi-Fi network and send UDP control commands.";
