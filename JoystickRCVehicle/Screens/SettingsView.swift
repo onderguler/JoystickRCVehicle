@@ -10,9 +10,8 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("isHapticFeedbackEnabled") private var isHapticFeedbackEnabled: Bool = true
     @AppStorage("selectedTheme") private var selectedTheme: String = "System"
-
-    @State private var controlSensitivity: Double = 50
-    @State private var isBluetoothEnabled: Bool = true
+    @AppStorage("movementSensitivity") private var movementSensitivity: Double = 50
+    @AppStorage("turretSensitivity") private var turretSensitivity: Double = 50
 
     @Environment(\.presentationMode) private var presentationMode
     
@@ -21,6 +20,20 @@ struct SettingsView: View {
             List {
                 // Control Sensitivity
                 Section(header: Text("control_settings".localized)) {
+                    NavigationLink(destination: CommandValuesInfoView()) {
+                        Label("sent_values".localized, systemImage: "arrow.left.arrow.right")
+                            .accessibilityIdentifier("sentValuesNavigationLink")
+                    }
+                    sensitivityControl(
+                        title: "movement_sensitivity".localized,
+                        value: $movementSensitivity,
+                        identifier: "movementSensitivitySlider"
+                    )
+                    sensitivityControl(
+                        title: "turret_sensitivity".localized,
+                        value: $turretSensitivity,
+                        identifier: "turretSensitivitySlider"
+                    )
                     Toggle("enable_haptic_feedback".localized, isOn: $isHapticFeedbackEnabled)
                 }
                 
@@ -55,9 +68,29 @@ struct SettingsView: View {
             }) {
                 Image(systemName: "xmark")
                     .foregroundColor(.primary)
-            })
+            }
+            .accessibilityIdentifier("settingsCloseButton"))
             .preferredColorScheme(getColorScheme())
         }
+    }
+
+    private func sensitivityControl(
+        title: String,
+        value: Binding<Double>,
+        identifier: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(title)
+                Spacer()
+                Text("\(Int(value.wrappedValue))%")
+                    .foregroundColor(.secondary)
+                    .monospacedDigit()
+            }
+            Slider(value: value, in: 0...100, step: 1)
+                .accessibilityIdentifier(identifier)
+        }
+        .padding(.vertical, 4)
     }
     
     private func getColorScheme() -> ColorScheme? {

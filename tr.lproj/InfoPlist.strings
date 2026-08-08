@@ -6,5 +6,7 @@
   
 */
 
-"NSBluetoothPeripheralUsageDescription" = "Bluetooth erişimi, yakındaki cihazlara bağlanmak ve onları uzaktan kontrol etmek, örneğin bir oyuncak veya aracı kontrol etmek için gereklidir.";
-"NSBluetoothAlwaysUsageDescription" = "Bluetooth erişimi, yakındaki cihazlara bağlanmak ve onları uzaktan kontrol etmek, örneğin bir oyuncak veya aracı kontrol etmek için gereklidir.";
+"CFBundleDisplayName" = "RC Joystick: WiFi and BLE";
+"NSBluetoothPeripheralUsageDescription" = "Bluetooth erişimi, uygulamanın uyumlu RC aracınızı bulup araca bağlanmasını sağlar. Örneğin joystick'i hareket ettirdiğinizde seçili araca sürüş ve taret komutları gönderilir.";
+"NSBluetoothAlwaysUsageDescription" = "Bluetooth erişimi, uygulamanın uyumlu RC aracınızı bulup araca bağlanmasını sağlar. Örneğin joystick'i hareket ettirdiğinizde seçili araca sürüş ve taret komutları gönderilir.";
+"NSLocalNetworkUsageDescription" = "Yerel ağ erişimi, RC aracınızın Wi-Fi ağına bağlanmak ve UDP kontrol komutları göndermek için kullanılır.";

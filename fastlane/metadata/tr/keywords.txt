@@ -1,0 +1,1 @@
+rc araç,uzaktan kumanda,joystick,bluetooth,ble,wifi,tank,taret
