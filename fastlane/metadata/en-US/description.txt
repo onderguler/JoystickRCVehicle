@@ -1,0 +1,17 @@
+RC Joystick: WiFi and BLE is a remote-control app for compatible, user-owned RC vehicles. A vehicle with electronics and firmware that support the app's control protocol is required; the app does not control ordinary RC products automatically.
+
+Choose the connection that matches your vehicle:
+
+• Bluetooth Low Energy discovers nearby compatible vehicles, connects to the selected vehicle, and sends control commands directly.
+• Wi-Fi joins your vehicle's local network and sends low-latency UDP control commands to its configured address.
+
+Control features:
+
+• A floating driving joystick appears where you touch and controls the left and right motors.
+• A separate floating joystick controls the turret while preserving its last target when released.
+• Independent driving and turret sensitivity settings provide precise or fast response.
+• Optional gyroscope control moves the turret from its current position.
+• Laser, fire, and trigger buttons control optional auxiliary outputs implemented by compatible vehicle hardware.
+• Connection status and safe-disconnect behavior help stop movement and auxiliary outputs when the connection changes.
+
+The app stores control preferences and Wi-Fi configuration on the device. It does not require an account and contains no advertising, analytics, tracking, in-app purchases, or cloud service.

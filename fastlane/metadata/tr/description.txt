@@ -1,0 +1,17 @@
+RC Joystick: WiFi and BLE, kullanıcıya ait uyumlu RC araçlar için bir uzaktan kumanda uygulamasıdır. Uygulamanın kontrol protokolünü destekleyen elektronik donanıma ve firmware'e sahip bir araç gereklidir; uygulama sıradan RC ürünlerini otomatik olarak kontrol etmez.
+
+Aracınıza uygun bağlantı yöntemini seçebilirsiniz:
+
+• Bluetooth Low Energy, yakındaki uyumlu araçları bulur, seçilen araca bağlanır ve kontrol komutlarını doğrudan gönderir.
+• Wi-Fi, aracın yerel ağına katılır ve ayarlanan adrese düşük gecikmeli UDP kontrol komutları gönderir.
+
+Kontrol özellikleri:
+
+• Dokunduğunuz yerde beliren sürüş joystick'i sol ve sağ motorları kontrol eder.
+• Ayrı taret joystick'i kuleyi kontrol eder ve bırakıldığında son hedefini korur.
+• Bağımsız sürüş ve taret hassasiyet ayarları hassas veya hızlı tepki sağlar.
+• İsteğe bağlı jiroskop kontrolü tareti mevcut konumundan hareket ettirir.
+• Lazer, ateş ve tetik düğmeleri, uyumlu araç donanımında bulunan isteğe bağlı yardımcı çıkışları kontrol eder.
+• Bağlantı durumu ve güvenli bağlantı kesme davranışı, bağlantı değiştiğinde hareketi ve yardımcı çıkışları durdurmaya yardımcı olur.
+
+Uygulama kontrol tercihlerini ve Wi-Fi yapılandırmasını cihazda saklar. Hesap gerektirmez; reklam, analiz, takip, uygulama içi satın alma veya bulut hizmeti içermez.

@@ -23,12 +23,63 @@ final class JoystickRCVehicleUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testControlSurfaceAndSettings() throws {
         let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        XCUIDevice.shared.orientation = .landscapeLeft
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let modePicker = app.segmentedControls["connectionModePicker"]
+        XCTAssertTrue(modePicker.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["connectionButton"].exists)
+        XCTAssertTrue(app.staticTexts["commandReadout"].exists)
+        XCTAssertTrue(app.otherElements["movementJoystickArea"].exists)
+        XCTAssertTrue(app.otherElements["turretJoystickArea"].exists)
+        XCTAssertTrue(app.buttons["laserButton"].exists)
+        XCTAssertTrue(app.buttons["fireButton"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["triggerButton"].exists)
+
+        modePicker.buttons.element(boundBy: 1).tap()
+        app.buttons["connectionButton"].tap()
+        XCTAssertTrue(app.textFields["wifiSSIDField"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.secureTextFields["wifiPasswordField"].exists)
+        XCTAssertTrue(app.textFields["wifiHostField"].exists)
+        XCTAssertTrue(app.textFields["wifiPortField"].exists)
+        XCTAssertTrue(app.buttons["wifiConnectButton"].exists)
+        app.buttons["wifiCloseButton"].tap()
+
+        modePicker.buttons.element(boundBy: 0).tap()
+        app.buttons["connectionButton"].tap()
+        XCTAssertTrue(app.buttons["bluetoothCloseButton"].waitForExistence(timeout: 3))
+        app.buttons["bluetoothCloseButton"].tap()
+
+        app.buttons["settingsButton"].tap()
+        XCTAssertTrue(app.sliders["movementSensitivitySlider"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.sliders["turretSensitivitySlider"].exists)
+
+        let sentValuesLink = app.staticTexts["Sent Values"]
+        XCTAssertTrue(sentValuesLink.waitForExistence(timeout: 3))
+        sentValuesLink.tap()
+        XCTAssertTrue(app.navigationBars["Sent Values"].waitForExistence(timeout: 3))
+    }
+
+    @MainActor
+    func testEdgeTouchStartsJoystickAtNeutral() throws {
+        let app = XCUIApplication()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        app.launch()
+
+        let readout = app.staticTexts["commandReadout"]
+        let turretArea = app.otherElements["turretJoystickArea"]
+        XCTAssertTrue(readout.waitForExistence(timeout: 5))
+        XCTAssertTrue(turretArea.exists)
+        XCTAssertEqual(readout.label, "0,0;0,0;0")
+
+        turretArea
+            .coordinate(withNormalizedOffset: CGVector(dx: 0.02, dy: 0.5))
+            .tap()
+
+        XCTAssertEqual(readout.label, "0,0;0,0;0")
     }
 
     @MainActor

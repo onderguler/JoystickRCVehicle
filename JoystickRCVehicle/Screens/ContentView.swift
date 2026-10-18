@@ -1,754 +1,442 @@
-//
-//  ContentView.swift
-//  JoystickRCVehicle
-//
-//  Created by Onder Guler on 24.09.2024.
-//
-
 import SwiftUI
-import CoreMotion
 
 struct ContentView: View {
-    @AppStorage("isHapticFeedbackEnabled") private var isHapticFeedbackEnabled: Bool?
-    
-    @State private var showingBluetoothDevices = false
+    @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("isHapticFeedbackEnabled") private var isHapticFeedbackEnabled = true
+    @AppStorage("movementSensitivity") private var movementSensitivity: Double = 50
+    @AppStorage("turretSensitivity") private var turretSensitivity: Double = 50
+
+    @StateObject private var coordinator = ConnectionCoordinator()
+    @StateObject private var gyroController = GyroController()
+
     @State private var showingInfoView = false
-    @State private var showSettingsView = false
-    
-    // Onboarding için state değişkenleri
-    @State private var showOnboarding = false
-    @State private var showOnboardingIntro = false
-    @State private var currentOnboardingStep = 0
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
-    
+    @State private var showingSettingsView = false
+    @State private var showingConnectionView = false
     @State private var showToast = false
-    @State private var showMessage = "connect_bluetooth_first".localized
-    
+    @State private var toastMessage = ""
+    @State private var wasConnected = false
+    @GestureState private var isTriggerTouchDown = false
 
-    @State private var combinedData = ""
-    var bluetoothManager = BluetoothManager()
-    
-    // Sol ve sağ joystick verilerini saklayan state
-    @State private var leftJoystickValue = "0,0"  // Sol joystick
-    @State private var rightJoystickValue = "0,0" // Sağ joystick
-    @State private var laserButtonValue = "l" // Laser buton verisi
-    @State private var fireButtonValue = "f" // Fire buton verisi
-    @State private var triggerButtonValue = "t" // Trigger buton verisi
-    private let motionManager = CMMotionManager()
-    @State private var isControlling: Bool = false
-    @State private var accumulatedX: Double = 0.0
-    @State private var accumulatedY: Double = 0.0
-    @State private var doubleValue: CGSize = .zero
-        
-    // Onboarding için referans noktaları
-    @State private var infoButtonPosition: CGPoint = .zero
-    @State private var settingsButtonPosition: CGPoint = .zero
-    @State private var bluetoothButtonPosition: CGPoint = .zero
-    @State private var gyroButtonPosition: CGPoint = .zero
-    @State private var leftJoystickPosition: CGPoint = .zero
-    @State private var laserButtonPosition: CGPoint = .zero
-    @State private var fireButtonPosition: CGPoint = .zero
-    @State private var triggerButtonPosition: CGPoint = .zero
-    @State private var rightJoystickPosition: CGPoint = .zero
-    
-    // Onboarding için state değişkenleri
-    @State private var onboardingIntroStep = 0
-    let onboardingIntroSteps: [OnboardingStep] = [
-        OnboardingStep(
-            title: "Bilgi Butonu",
-            description: "Uygulama hakkında bilgi almak için bu butona tıklayın.",
-            icon: "info.circle"
-        ),
-        OnboardingStep(
-            title: "Ayarlar Butonu",
-            description: "Uygulama ayarlarını değiştirmek için bu butona tıklayın.",
-            icon: "gear.circle"
-        ),
-        OnboardingStep(
-            title: "Bluetooth Bağlantısı",
-            description: "Aracınıza bağlanmak için bu butona tıklayın.",
-            icon: "cable.connector"
-        ),
-        OnboardingStep(
-            title: "Gyro Kontrolü",
-            description: "Jiroskop ile kontrol etmek için bu butona tıklayın.",
-            icon: "gyroscope"
-        ),
-        OnboardingStep(
-            title: "Sol Joystick",
-            description: "Aracın hareketini kontrol etmek için kullanılır.",
-            icon: "arrow.up.and.down.and.arrow.left.and.right"
-        ),
-        OnboardingStep(
-            title: "Lazer Butonu",
-            description: "Lazeri açıp kapatmak için kullanılır.",
-            icon: "target"
-        ),
-        OnboardingStep(
-            title: "Ateş Butonu",
-            description: "Ateş etmek için kullanılır.",
-            icon: "bolt.fill"
-        ),
-        OnboardingStep(
-            title: "Tetik Butonu",
-            description: "Ateş etmeyi tetiklemek için kullanılır.",
-            icon: "flame.fill"
-        ),
-        OnboardingStep(
-            title: "Sağ Joystick",
-            description: "Taret kontrolü için kullanılır.",
-            icon: "arrow.up.and.down.and.arrow.left.and.right"
-        )
-    ]
-    
-    func toggleGyroUpdates() {
-        if isControlling {
-            stopGyroUpdates()
-        } else {
-            startGyroUpdates()
-        }
-        isControlling.toggle()
-    }
-    
-    private func startGyroUpdates() {
-        if motionManager.isGyroAvailable {
-            motionManager.gyroUpdateInterval = 0.1
-            motionManager.startGyroUpdates(to: OperationQueue.main) { data, error in
-                guard let gyroData = data else { return }
-                
-                // Rotation rate'i biriktirerek kullanıyoruz
-                let rotationRateX = gyroData.rotationRate.x * 100.0
-                let rotationRateY = gyroData.rotationRate.y * 100.0
-                
-                // Yeni pozisyonları önceki pozisyonlara ekleyerek biriktiriyoruz
-                accumulatedX += rotationRateX * 0.1 // Kümülatif birikim
-                accumulatedY += rotationRateY * 0.1 // Kümülatif birikim
-                
-                // Yeni değerleri sınırlandır
-                let xValue = constrain(Int(accumulatedX), min: -100, max: 100)
-                let yValue = constrain(Int(accumulatedY), min: -100, max: 100)
-                
-                // Joystick verilerini güncelle
-                rightJoystickValue = "\(xValue),\(yValue)"
-                updateAndSendCombinedJoystickData()
-            }
-        }
-    }
-    
-    private func stopGyroUpdates() {
-        motionManager.stopGyroUpdates()
-        
-        accumulatedX = 0.0
-        accumulatedY = 0.0
-        rightJoystickValue = "\(accumulatedX),\(accumulatedY)"
-        updateAndSendCombinedJoystickData()
-    }
-    
     var body: some View {
-        VStack {
-            VStack {
-                HStack {
-                    Button(action: {
-                        if isHapticFeedbackEnabled ?? true {
-                            HapticFeedbackManager.shared.triggerImpact(style: .light)
-                        }
-                        showingInfoView = true
-                    }) {
-                        Image(systemName: "info.circle")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .foregroundColor(.white)
-                    }
-                    .sheet(isPresented: $showingInfoView) {
-                      
-                        InfoView()
-                    }
-                    .background(GeometryReader { geo -> Color in
-                        DispatchQueue.main.async {
-                            infoButtonPosition = CGPoint(
-                                x: geo.frame(in: .global).midX,
-                                y: geo.frame(in: .global).midY
-                            )
-                        }
-                        return Color.clear
-                    })
-                    
-                    Button(action: {
-                        if isHapticFeedbackEnabled ?? true {
-                            HapticFeedbackManager.shared.triggerImpact(style: .light)
-                        }
-                        showSettingsView = true
-                    }) {
-                        Image(systemName: "gear.circle")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .foregroundColor(.white)
-                    }
-                    .sheet(isPresented: $showSettingsView) {
-                        SettingsView()
-                    }
-                    .background(GeometryReader { geo -> Color in
-                        DispatchQueue.main.async {
-                            settingsButtonPosition = CGPoint(
-                                x: geo.frame(in: .global).midX,
-                                y: geo.frame(in: .global).midY
-                            )
-                        }
-                        return Color.clear
-                    })
+        VStack(spacing: 12) {
+            controlToolbar
+            Divider()
+            commandReadout
+            controlSurface
+        }
+        .padding(16)
+        .toast(isPresented: $showToast, message: $toastMessage)
+        .sheet(isPresented: $showingInfoView) {
+            InfoView()
+        }
+        .sheet(isPresented: $showingSettingsView) {
+            SettingsView()
+        }
+        .sheet(isPresented: $showingConnectionView) {
+            connectionSheet
+        }
+        .onChange(of: coordinator.connectionState) { state in
+            handleConnectionState(state)
+        }
+        .onChange(of: turretSensitivity) { value in
+            gyroController.sensitivity = value
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase != .active {
+                stopTransientControls(sendImmediately: true)
+            }
+        }
+    }
 
-                    Spacer()
-                    Button(action: {
-                        if isHapticFeedbackEnabled ?? true {
-                            HapticFeedbackManager.shared.triggerImpact(style: .light)
-                        }
-                        showingBluetoothDevices = true  // Bluetooth cihaz listesini açar
-                    }) {
-                        Image(systemName: bluetoothManager.isConnected ?  "cable.connector" : "cable.connector.slash")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .padding()
-                            .background(bluetoothManager.isConnected ? Color.green: .red)
-                            .clipShape(Circle())
-                            .foregroundColor(.white)
-                    }
-                    .sheet(isPresented: $showingBluetoothDevices) {
-                        // Bluetooth cihaz listesini burada açabilirsiniz
-                        BluetoothDeviceListView(bluetoothManager: bluetoothManager)
-                    }
-                    .background(GeometryReader { geo -> Color in
-                        DispatchQueue.main.async {
-                            bluetoothButtonPosition = CGPoint(
-                                x: geo.frame(in: .global).midX,
-                                y: geo.frame(in: .global).midY
-                            )
-                        }
-                        return Color.clear
-                    })
-                    
-                    // Gyro Kontrol Butonu
-                    Button(action: {
-                        if isHapticFeedbackEnabled ?? true {
-                            HapticFeedbackManager.shared.triggerImpact(style: .light)
-                        }
-                        if bluetoothManager.isConnected {
-                            toggleGyroUpdates()
-                        } else {
-                            showMessage = "connect_bluetooth_first".localized
-                            showToast = true
-                        }
-                    }) {
-                        Text("gyro".localized)
-                            .font(.title)
-                            .padding()
-                            .background(isControlling ? Color.red : Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    .background(GeometryReader { geo -> Color in
-                        DispatchQueue.main.async {
-                            gyroButtonPosition = CGPoint(
-                                x: geo.frame(in: .global).midX,
-                                y: geo.frame(in: .global).midY
-                            )
-                        }
-                        return Color.clear
-                    })
-                }
+    private var controlToolbar: some View {
+        HStack(spacing: 12) {
+            toolbarButton(
+                systemName: "info.circle",
+                background: .blue,
+                accessibilityLabel: "info_title".localized
+            ) {
+                triggerHaptic()
+                showingInfoView = true
             }
-            .padding(20)
-            Spacer()
-            Text("\(combinedData)")
-            
-            HStack {
-                // Sol joystick
-                
-                ZStack {
-                    JoystickView(size: 250, joyStickOnChange: { translation, doubleValue in
-                        
-                        leftJoystickValue = translation
-                        updateAndSendCombinedJoystickData()
-                    }, type: .movement)
-                    .background(GeometryReader { geo -> Color in
-                        DispatchQueue.main.async {
-                            leftJoystickPosition = CGPoint(
-                                x: geo.frame(in: .global).midX,
-                                y: geo.frame(in: .global).midY
-                            )
-                        }
-                        return Color.clear
-                    })
-                       
-                       // Fire Button
-                       Button(action: {
-                           if isHapticFeedbackEnabled ?? true {
-                               HapticFeedbackManager.shared.triggerImpact(style: .light)
-                           }
-                           if bluetoothManager.isConnected {
-                               if fireButtonValue == "F" {
-                                   fireButtonValue = "f"
-                                   triggerButtonValue = "t"
-                               } else {
-                                   fireButtonValue = "F"
-                               }
-                               updateAndSendCombinedJoystickData()
-                           } else {
-                               showMessage = "connect_bluetooth_first".localized
-                               showToast = true
-                           }
-                       }) {
-                           Image(systemName: "bolt.fill") // Uygun ikon
-                               .resizable()
-                               .frame(width: 40, height: 40)
-                               .padding()
-                               .background(fireButtonValue == "F" ? Color.red : Color.blue)
-                               .clipShape(Circle())
-                               .foregroundColor(.white)
-                       }
-                       .offset(x: 148, y: -80) // Sağ joystick'in sol üst köşesi için yerleşim
-                       .background(GeometryReader { geo -> Color in
-                           DispatchQueue.main.async {
-                               fireButtonPosition = CGPoint(
-                                   x: geo.frame(in: .global).midX,
-                                   y: geo.frame(in: .global).midY
-                               )
-                           }
-                           return Color.clear
-                       })
-                       
-                       // Trigger Button
-                       Button(action: {
-                           if isHapticFeedbackEnabled ?? true {
-                               HapticFeedbackManager.shared.triggerImpact(style: .light)
-                           }
-                           if bluetoothManager.isConnected {
-                               if triggerButtonValue == "T" {
-                                   triggerButtonValue = "t"
-                               } else if fireButtonValue == "F" && triggerButtonValue == "t" {
-                                   triggerButtonValue = "T"
-                               } else {
-                                   showMessage = "enable_fire_button_first".localized
-                                   showToast = true
-                               }
-                               updateAndSendCombinedJoystickData()
-                           } else {
-                               showMessage = "connect_bluetooth_first".localized
-                               showToast = true
-                           }
-                       }) {
-                           Image(systemName: "flame.fill") // Uygun ikon
-                               .resizable()
-                               .frame(width: 40, height: 40)
-                               .padding()
-                               .background(triggerButtonValue == "T" ? Color.red : Color.blue)
-                               .clipShape(Circle())
-                               .foregroundColor(.white)
-                       }
-                       .offset(x: 168, y: 0) // Sağ joystick'in sol üst köşesi için yerleşim
-                       .background(GeometryReader { geo -> Color in
-                           DispatchQueue.main.async {
-                               triggerButtonPosition = CGPoint(
-                                   x: geo.frame(in: .global).midX,
-                                   y: geo.frame(in: .global).midY
-                               )
-                           }
-                           return Color.clear
-                       })
-                    
-                    // Laser Button
-                    Button(action: {
-                        if isHapticFeedbackEnabled ?? true {
-                            HapticFeedbackManager.shared.triggerImpact(style: .light)
-                        }
-                        if bluetoothManager.isConnected {
-                            laserButtonValue = (laserButtonValue == "L") ? "l" : "L"
-                            updateAndSendCombinedJoystickData()
-                        } else {
-                            showMessage = "connect_bluetooth_first".localized
-                            showToast = true
-                        }
-                        
-                    }) {
-                        Image(systemName: "target") // Uygun ikon
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .padding()
-                            .background(laserButtonValue == "L" ? Color.red : Color.blue)
-                            .clipShape(Circle())
-                            .foregroundColor(.white)
-                    }
-                    .offset(x: 148, y: 80)
-                    .background(GeometryReader { geo -> Color in
-                        DispatchQueue.main.async {
-                            laserButtonPosition = CGPoint(
-                                x: geo.frame(in: .global).midX,
-                                y: geo.frame(in: .global).midY
-                            )
-                        }
-                        return Color.clear
-                    })
-                }
-                Spacer()
-                
-                JoystickView(joystickPosition: doubleValue, size: 250, joyStickOnChange: { translation, doubleValue in
-                    self.doubleValue = doubleValue
-                    rightJoystickValue = translation
-                    updateAndSendCombinedJoystickData()
-                }, type: .turret)
-                .background(GeometryReader { geo -> Color in
-                    DispatchQueue.main.async {
-                        rightJoystickPosition = CGPoint(
-                            x: geo.frame(in: .global).midX,
-                            y: geo.frame(in: .global).midY
-                        )
-                    }
-                    return Color.clear
-                })
-                
+            .accessibilityIdentifier("infoButton")
+
+            toolbarButton(
+                systemName: "gearshape",
+                background: .blue,
+                accessibilityLabel: "settings".localized
+            ) {
+                triggerHaptic()
+                showingSettingsView = true
             }
+            .accessibilityIdentifier("settingsButton")
+
+            Spacer(minLength: 8)
+
+            Picker("connection_mode".localized, selection: connectionModeBinding) {
+                Text("bluetooth".localized).tag(ConnectionMode.bluetooth)
+                Text("wifi".localized).tag(ConnectionMode.wifi)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 230)
+            .accessibilityIdentifier("connectionModePicker")
+
+            Spacer(minLength: 8)
+
+            toolbarButton(
+                systemName: connectionIcon,
+                background: connectionColor,
+                accessibilityLabel: "connection".localized
+            ) {
+                triggerHaptic()
+                showingConnectionView = true
+            }
+            .accessibilityIdentifier("connectionButton")
+
+            toolbarButton(
+                systemName: "gyroscope",
+                background: gyroController.isActive ? .red : (coordinator.isConnected ? .blue : .gray),
+                accessibilityLabel: "gyro".localized
+            ) {
+                triggerHaptic()
+                toggleGyro()
+            }
+            .disabled(!gyroController.isAvailable)
+            .accessibilityIdentifier("gyroButton")
         }
-        .padding(.horizontal)
-        .toast(isPresented: $showToast, message: $showMessage)
-        .onAppear {
-            if !hasCompletedOnboarding {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    showOnboardingIntro = true
-                }
-            }
-        }
-        .overlay {
-            if showOnboardingIntro {
-                StepByStepIntroView(
-                    steps: onboardingIntroSteps,
-                    currentStep: $onboardingIntroStep,
-                    isPresented: $showOnboardingIntro,
-                    onComplete: {
-                        hasCompletedOnboarding = true
-                    }
+        .frame(minHeight: 52)
+    }
+
+    private var controlSurface: some View {
+        GeometryReader { _ in
+            HStack(spacing: 12) {
+                FloatingJoystickArea(
+                    kind: .movement,
+                    sensitivity: movementSensitivity,
+                    turretPosition: currentTurret,
+                    onMovement: updateMovement
+                )
+
+                deviceToolbar
+                    .frame(width: 88)
+
+                FloatingJoystickArea(
+                    kind: .turret,
+                    sensitivity: turretSensitivity,
+                    turretPosition: currentTurret,
+                    isEnabled: !gyroController.isActive,
+                    onTurret: updateTurret
                 )
             }
-            
-            if showOnboarding {
-                ImprovedOnboardingView(
-                    isPresented: $showOnboarding,
-                    currentStep: $currentOnboardingStep,
-                    onComplete: {
-                        hasCompletedOnboarding = true
-                        showOnboarding = false
-                    },
-                    positions: [
-                        infoButtonPosition,
-                        settingsButtonPosition,
-                        bluetoothButtonPosition,
-                        gyroButtonPosition,
-                        leftJoystickPosition,
-                        laserButtonPosition,
-                        fireButtonPosition,
-                        triggerButtonPosition,
-                        rightJoystickPosition
-                    ]
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+        }
+        .frame(minHeight: 240)
+    }
+
+    private var commandReadout: some View {
+        Text(commandPayload)
+            .font(.system(size: 14, weight: .semibold, design: .monospaced))
+            .foregroundStyle(coordinator.isConnected ? Color.primary : Color.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .accessibilityIdentifier("commandReadout")
+    }
+
+    private var deviceToolbar: some View {
+        VStack(spacing: 8) {
+            Spacer(minLength: 0)
+            deviceButton(
+                systemName: "target",
+                isActive: coordinator.currentCommand.flags.contains(.laser),
+                activeColor: .red,
+                size: 64,
+                accessibilityLabel: "laser_button".localized,
+                identifier: "laserButton",
+                action: toggleLaser
+            )
+            deviceButton(
+                systemName: "bolt.fill",
+                isActive: coordinator.currentCommand.flags.contains(.fire),
+                activeColor: .orange,
+                size: 64,
+                accessibilityLabel: "fire_button".localized,
+                identifier: "fireButton",
+                action: toggleFire
+            )
+            triggerButton
+            Spacer(minLength: 0)
+        }
+    }
+
+    private var triggerButton: some View {
+        let isActive = coordinator.currentCommand.flags.contains(.trigger)
+
+        return Image(systemName: "flame.fill")
+            .font(.system(size: 28, weight: .semibold))
+            .frame(width: 76, height: 76)
+            .background(isActive ? Color.red : Color.blue)
+            .foregroundColor(.white)
+            .clipShape(Circle())
+            .scaleEffect(isTriggerTouchDown ? 0.94 : 1)
+            .contentShape(Circle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .updating($isTriggerTouchDown) { value, isPressed, _ in
+                        let center = CGPoint(x: 38, y: 38)
+                        isPressed = hypot(
+                            value.location.x - center.x,
+                            value.location.y - center.y
+                        ) <= 38
+                    }
+            )
+            .onChange(of: isTriggerTouchDown, perform: setTriggerPressed)
+            .accessibilityElement()
+            .accessibilityLabel("trigger_button".localized)
+            .accessibilityValue(isActive ? "active".localized : "inactive".localized)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityIdentifier("triggerButton")
+            .help("trigger_button".localized)
+    }
+
+    @ViewBuilder
+    private var connectionSheet: some View {
+        switch coordinator.selectedMode {
+        case .bluetooth:
+            if let bluetoothManager = coordinator.bluetoothManager {
+                BluetoothDeviceListView(
+                    bluetoothManager: bluetoothManager,
+                    onDisconnect: coordinator.disconnectSelectedTransport
+                )
+            }
+        case .wifi:
+            if let wifiManager = coordinator.wifiManager {
+                WiFiConnectionView(
+                    wifiManager: wifiManager,
+                    onDisconnect: coordinator.disconnectSelectedTransport
                 )
             }
         }
     }
-    
-    // Joystick verilerini birleştirip Bluetooth'a gönderir
-    func updateAndSendCombinedJoystickData() {
-        combinedData = "\(leftJoystickValue);\(rightJoystickValue);\(laserButtonValue)\(fireButtonValue)\(triggerButtonValue)"
-        bluetoothManager.updateJoystickValue(value: combinedData)
-        debugPrint(combinedData)
-    }
-    
-    // Gelen değerlerin sınırlandırılması
-    private func constrain(_ value: Int, min: Int, max: Int) -> Int {
-        return Swift.min(Swift.max(value, min), max)
-    }
-}
 
-// Geliştirilmiş Onboarding ekranı
-struct ImprovedOnboardingView: View {
-    @Binding var isPresented: Bool
-    @Binding var currentStep: Int
-    var onComplete: () -> Void
-    var positions: [CGPoint]
-    
-    // Onboarding adımları
-    let steps = [
-        OnboardingStep(
-            title: "Bilgi Butonu",
-            description: "Uygulama hakkında bilgi almak için bu butona tıklayın.",
-            icon: "info.circle"
-        ),
-        OnboardingStep(
-            title: "Ayarlar Butonu",
-            description: "Uygulama ayarlarını değiştirmek için bu butona tıklayın.",
-            icon: "gear.circle"
-        ),
-        OnboardingStep(
-            title: "Bluetooth Bağlantısı",
-            description: "Aracınıza bağlanmak için bu butona tıklayın.",
-            icon: "cable.connector"
-        ),
-        OnboardingStep(
-            title: "Gyro Kontrolü",
-            description: "Jiroskop ile kontrol etmek için bu butona tıklayın.",
-            icon: "gyroscope"
-        ),
-        OnboardingStep(
-            title: "Sol Joystick",
-            description: "Aracın hareketini kontrol etmek için kullanılır.",
-            icon: "arrow.up.and.down.and.arrow.left.and.right"
-        ),
-        OnboardingStep(
-            title: "Lazer Butonu",
-            description: "Lazeri açıp kapatmak için kullanılır.",
-            icon: "target"
-        ),
-        OnboardingStep(
-            title: "Ateş Butonu",
-            description: "Ateş etmek için kullanılır.",
-            icon: "bolt.fill"
-        ),
-        OnboardingStep(
-            title: "Tetik Butonu",
-            description: "Ateş etmeyi tetiklemek için kullanılır.",
-            icon: "flame.fill"
-        ),
-        OnboardingStep(
-            title: "Sağ Joystick",
-            description: "Taret kontrolü için kullanılır.",
-            icon: "arrow.up.and.down.and.arrow.left.and.right"
+    private var connectionModeBinding: Binding<ConnectionMode> {
+        Binding(
+            get: { coordinator.selectedMode },
+            set: { mode in
+                guard mode != coordinator.selectedMode else { return }
+                triggerHaptic()
+                wasConnected = false
+                gyroController.stop()
+                coordinator.selectMode(mode)
+            }
         )
-    ]
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Yarı saydam arka plan
-                Color.black.opacity(0.7)
-                    .ignoresSafeArea()
-                
-                // Mevcut adımı göster
-                if currentStep < steps.count && currentStep < positions.count {
-                    let step = steps[currentStep]
-                    let position = positions[currentStep]
-                    
-                    // Pozisyon geçerli ise göster
-                    if position != .zero {
-                        // Vurgulanan öğe
-                        Circle()
-                            .stroke(Color.white, lineWidth: 3)
-                            .frame(width: 80, height: 80)
-                            .position(position)
-                        
-                        // Bilgi kartı
-                        VStack(alignment: .center, spacing: 10) {
-                            Image(systemName: step.icon)
-                                .font(.largeTitle)
-                                .foregroundColor(.white)
-                            
-                            Text(step.title)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                            
-                            Text(step.description)
-                                .font(.body)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
-                                .padding(.horizontal)
-                            
-                            HStack(spacing: 20) {
-                                // Önceki buton
-                                if currentStep > 0 {
-                                    Button("Önceki") {
-                                        withAnimation {
-                                            currentStep -= 1
-                                        }
-                                    }
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                                }
-                                
-                                // Sonraki/Bitir buton
-                                Button(currentStep == steps.count - 1 ? "Bitir" : "Sonraki") {
-                                    withAnimation {
-                                        if currentStep == steps.count - 1 {
-                                            onComplete()
-                                        } else {
-                                            currentStep += 1
-                                        }
-                                    }
-                                }
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                                
-                                // Atla butonu
-                                Button("Atla") {
-                                    onComplete()
-                                }
-                                .padding()
-                                .background(Color.gray)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                            }
-                        }
-                        .padding()
-                        .background(Color.blue.opacity(0.8))
-                        .cornerRadius(15)
-                        .shadow(radius: 10)
-                        .frame(width: min(geometry.size.width * 0.4, 400))
-                        .position(calculateInfoCardPosition(for: position, in: geometry))
-                    }
-                }
-            }
+    }
+
+    private var currentTurret: TurretPosition {
+        TurretPosition(
+            x: coordinator.currentCommand.turretX,
+            y: coordinator.currentCommand.turretY
+        )
+    }
+
+    private var commandPayload: String {
+        let command = coordinator.currentCommand
+        return "\(command.leftMotor),\(command.rightMotor);\(command.turretX),\(command.turretY);\(command.flags.rawValue)"
+    }
+
+    private var connectionIcon: String {
+        switch coordinator.selectedMode {
+        case .bluetooth:
+            return coordinator.isConnected ? "cable.connector" : "cable.connector.slash"
+        case .wifi:
+            return coordinator.isConnected ? "wifi" : "wifi.slash"
         }
     }
-    
-    // Bilgi kartının pozisyonunu hesapla
-    private func calculateInfoCardPosition(for elementPosition: CGPoint, in geometry: GeometryProxy) -> CGPoint {
-        let size = geometry.size
-        
-        // Ekranın merkezi
-        let centerX = size.width / 2
-        let centerY = size.height / 2
-        
-        // Bileşenin merkeze göre konumu
-        let isLeft = elementPosition.x < centerX
-        let isTop = elementPosition.y < centerY
-        
-        // Güvenli kenar boşlukları
-        let horizontalPadding: CGFloat = 30
-        let verticalPadding: CGFloat = 30
-        
-        // Bilgi kartının boyutları (yaklaşık)
-        let cardWidth = min(size.width * 0.4, 400)
-        let cardHeight: CGFloat = 250 // Yaklaşık yükseklik
-        
-        // Kartın x pozisyonu
-        let cardX: CGFloat
-        if isLeft {
-            // Bileşen solda, kart sağda
-            cardX = size.width - cardWidth/2 - horizontalPadding
-        } else {
-            // Bileşen sağda, kart solda
-            cardX = cardWidth/2 + horizontalPadding
+
+    private var connectionColor: Color {
+        switch coordinator.connectionState {
+        case .connected:
+            return .green
+        case .connecting:
+            return .orange
+        case .disconnected, .failed:
+            return .red
         }
-        
-        // Kartın y pozisyonu
-        let cardY: CGFloat
-        if isTop {
-            // Bileşen üstte, kart altta
-            cardY = size.height - cardHeight/2 - verticalPadding
-        } else {
-            // Bileşen altta, kart üstte
-            cardY = cardHeight/2 + verticalPadding
-        }
-        
-        // Özel durumlar için ayarlamalar
-        // Joystick ve çevresindeki butonlar için özel ayarlamalar
-        if currentStep >= 4 && currentStep <= 8 {
-            // Sol joystick ve çevresi
-            if currentStep == 4 || (currentStep >= 5 && currentStep <= 7) {
-                return CGPoint(x: size.width * 0.75, y: centerY)
-            }
-            // Sağ joystick
-            else if currentStep == 8 {
-                return CGPoint(x: size.width * 0.25, y: centerY)
-            }
-        }
-        
-        return CGPoint(x: cardX, y: cardY)
     }
-}
 
-// Basitleştirilmiş Onboarding adımı modeli
-struct OnboardingStep {
-    let title: String
-    let description: String
-    let icon: String
-}
-
-// Her buton için tam ekran intro view
-struct StepByStepIntroView: View {
-    let steps: [OnboardingStep]
-    @Binding var currentStep: Int
-    @Binding var isPresented: Bool
-    var onComplete: () -> Void
-
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.85).ignoresSafeArea()
-            VStack(spacing: 32) {
-                Spacer()
-                Image(systemName: steps[currentStep].icon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue.opacity(0.5))
-                    .clipShape(Circle())
-                Text(steps[currentStep].title)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                Text(steps[currentStep].description)
-                    .font(.title3)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                Spacer()
-                HStack(spacing: 24) {
-                    Button("Atla") {
-                        isPresented = false
-                        onComplete()
-                    }
-                    .font(.title2)
-                    .frame(minWidth: 100, minHeight: 44)
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    if currentStep > 0 {
-                        Button("Geri") {
-                            withAnimation { currentStep -= 1 }
-                        }
-                        .font(.title2)
-                        .frame(minWidth: 100, minHeight: 44)
-                        .background(Color.blue.opacity(0.7))
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                    }
-                    Button(currentStep == steps.count - 1 ? "Bitir" : "Sonraki") {
-                        withAnimation {
-                            if currentStep == steps.count - 1 {
-                                isPresented = false
-                                onComplete()
-                            } else {
-                                currentStep += 1
-                            }
-                        }
-                    }
-                    .font(.title2)
-                    .frame(minWidth: 100, minHeight: 44)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                }
-                .padding(.bottom, 40)
-            }
-            .padding(.horizontal, 24)
+    private func toolbarButton(
+        systemName: String,
+        background: Color,
+        accessibilityLabel: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 22, weight: .semibold))
+                .frame(width: 48, height: 48)
+                .background(background)
+                .foregroundColor(.white)
+                .clipShape(Circle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(accessibilityLabel)
+        .help(accessibilityLabel)
+    }
+
+    private func deviceButton(
+        systemName: String,
+        isActive: Bool,
+        activeColor: Color,
+        size: CGFloat,
+        accessibilityLabel: String,
+        identifier: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 24, weight: .semibold))
+                .frame(width: size, height: size)
+                .background(isActive ? activeColor : Color.blue)
+                .foregroundColor(.white)
+                .clipShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityIdentifier(identifier)
+        .help(accessibilityLabel)
+    }
+
+    private func updateMovement(_ movement: MotorOutput) {
+        var command = coordinator.currentCommand
+        command.leftMotor = movement.left
+        command.rightMotor = movement.right
+        coordinator.updateCommand(command)
+    }
+
+    private func updateTurret(_ position: TurretPosition) {
+        var command = coordinator.currentCommand
+        command.turretX = position.x
+        command.turretY = position.y
+        coordinator.updateCommand(command)
+    }
+
+    private func toggleLaser() {
+        guard requireConnection() else { return }
+        triggerHaptic()
+        var command = coordinator.currentCommand
+        toggle(.laser, in: &command.flags)
+        coordinator.updateCommand(command)
+    }
+
+    private func toggleFire() {
+        guard requireConnection() else { return }
+        triggerHaptic()
+        var command = coordinator.currentCommand
+        if command.flags.contains(.fire) {
+            command.flags.remove([.fire, .trigger])
+        } else {
+            command.flags.insert(.fire)
+        }
+        coordinator.updateCommand(command)
+    }
+
+    private func setTriggerPressed(_ isPressed: Bool) {
+        var command = coordinator.currentCommand
+
+        guard isPressed else {
+            guard command.flags.contains(.trigger) else { return }
+            command.flags.remove(.trigger)
+            coordinator.updateCommand(command)
+            return
+        }
+
+        guard requireConnection() else { return }
+        guard command.flags.contains(.fire) else {
+            show(message: "enable_fire_button_first".localized)
+            return
+        }
+        guard !command.flags.contains(.trigger) else { return }
+
+        if isHapticFeedbackEnabled {
+            HapticFeedbackManager.shared.triggerImpact(style: .medium)
+        }
+        command.flags.insert(.trigger)
+        coordinator.updateCommand(command)
+    }
+
+    private func toggle(_ flag: DeviceFlags, in flags: inout DeviceFlags) {
+        if flags.contains(flag) {
+            flags.remove(flag)
+        } else {
+            flags.insert(flag)
+        }
+    }
+
+    private func toggleGyro() {
+        guard requireConnection() else { return }
+        if gyroController.isActive {
+            gyroController.stop()
+            return
+        }
+
+        let coordinator = coordinator
+        let started = gyroController.start(
+            from: currentTurret,
+            sensitivity: turretSensitivity
+        ) { [weak coordinator] position in
+            guard let coordinator else { return }
+            var command = coordinator.currentCommand
+            command.turretX = position.x
+            command.turretY = position.y
+            coordinator.updateCommand(command)
+        }
+        if !started {
+            show(message: "gyro_unavailable".localized)
+        }
+    }
+
+    private func requireConnection() -> Bool {
+        guard coordinator.isConnected else {
+            show(message: "connect_vehicle_first".localized)
+            return false
+        }
+        return true
+    }
+
+    private func handleConnectionState(_ state: VehicleConnectionState) {
+        switch state {
+        case .connected:
+            wasConnected = true
+        case .failed(let message):
+            stopTransientControls(sendImmediately: false)
+            show(message: message)
+            wasConnected = false
+        case .disconnected:
+            if wasConnected {
+                stopTransientControls(sendImmediately: false)
+                show(message: "device_disconnected".localized)
+            }
+            wasConnected = false
+        case .connecting:
+            break
+        }
+    }
+
+    private func stopTransientControls(sendImmediately: Bool) {
+        gyroController.stop()
+        coordinator.updateCommand(coordinator.currentCommand.safelyStopped())
+        if sendImmediately {
+            coordinator.sendCurrentCommand()
+        }
+    }
+
+    private func triggerHaptic() {
+        guard isHapticFeedbackEnabled else { return }
+        HapticFeedbackManager.shared.triggerImpact(style: .light)
+    }
+
+    private func show(message: String) {
+        toastMessage = message
+        showToast = true
     }
 }
