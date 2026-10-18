@@ -16,6 +16,8 @@ const uint8_t FIRLATICILAR = 11;
 const uint8_t ATESLEYICI = 4;
 
 const unsigned long COMMAND_TIMEOUT_MS = 250;
+// A partial frame must not survive a link gap, even before the first command.
+const unsigned long INPUT_BYTE_TIMEOUT_MS = COMMAND_TIMEOUT_MS;
 const int MOTOR_COMMAND_MIN = -99;
 const int MOTOR_COMMAND_MAX = 99;
 const int MOTOR_COMMAND_DEADZONE = 20;
@@ -60,6 +62,7 @@ unsigned long lastServoUpdateAt = 0;
 
 uint8_t inputBuffer[COMMAND_PACKET_SIZE];
 uint8_t inputLength = 0;
+unsigned long lastInputByteAt = 0;
 bool commandIsActive = false;
 bool hasAcceptedSequence = false;
 uint8_t lastAcceptedSequence = 0;
@@ -95,6 +98,8 @@ void setup() {
 }
 
 void loop() {
+  // Expire the previous session before new bytes can complete its partial frame.
+  enforceCommandWatchdog();
   readCommandBytes();
   applyLatestCommand();
   enforceCommandWatchdog();
@@ -112,6 +117,15 @@ void readCommandBytes() {
 }
 
 void ingestCommandByte(uint8_t incoming) {
+  const unsigned long now = millis();
+  // Serial draining can cross the deadline after loop()'s initial check.
+  // Use this byte's single time snapshot for both expiry decisions.
+  enforceCommandWatchdogAt(now);
+  if (inputLength > 0 && now - lastInputByteAt >= INPUT_BYTE_TIMEOUT_MS) {
+    inputLength = 0;
+  }
+  lastInputByteAt = now;
+
   if (inputLength == 0) {
     if (incoming == COMMAND_HEADER) {
       inputBuffer[inputLength++] = incoming;
@@ -394,10 +408,17 @@ void setDeviceFlags(uint8_t flags) {
 }
 
 void enforceCommandWatchdog() {
-  if (commandIsActive && millis() - lastValidCommandAt >= COMMAND_TIMEOUT_MS) {
+  enforceCommandWatchdogAt(millis());
+}
+
+void enforceCommandWatchdogAt(unsigned long now) {
+  if (commandIsActive && now - lastValidCommandAt >= COMMAND_TIMEOUT_MS) {
     stopUnsafeOutputs();
     commandIsActive = false;
     hasAcceptedSequence = false;
+    // Drop the old frame together with its sequence history. A new packet's
+    // header must never become the CRC/payload of a pre-watchdog command.
+    inputLength = 0;
   }
 }
 

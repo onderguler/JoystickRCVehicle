@@ -107,6 +107,12 @@ Arduino ve gelecekteki Pi servisi son kabul edilen yeni komuttan sonra `250 ms` 
 - Tetik kapanir.
 - Taret servolari son hedefte tutulur.
 - Sequence gecmisi temizlenir.
+- Yarim kalan seri paket de temizlenir. Watchdog kontrolu yeni baytlar
+  okunmadan once yapilir; yeni paketin basligi eski paketin devamini tamamlayamaz.
+
+Arduino, henuz hic gecerli komut almamisken veya watchdog sonrasinda da,
+yarim paket icin `250 ms` baytlar-arasi zaman asimi uygular. Zaman asimi yeni
+bayti parser'a eklemeden once kontrol edilir.
 
 CRC ve sequence bozuk, tekrar veya sirasi gecmis komutlarin uygulanmasini engeller; tek basina teslimat garantisi vermez.
 

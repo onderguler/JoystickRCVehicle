@@ -8,6 +8,7 @@ Bu firmware yalnizca JoystickRCVehicle Binary Control Protocol V2 paketlerini ka
 - Tekrar ve eski paket korumasi: 8 bit sequence
 - Arduino seri tamponunda yalnizca en yeni gecerli komut uygulanir
 - Guvenli cikis watchdog'u: 250 ms
+- Watchdog yarim paketi de temizler; etkin komut olmasa bile 250 ms bayt arasi kesinti eski parser parcasini gecersiz kilar
 - Dusuk hiz korumasi: PWM 70 altinda motor kapali
 - Non-blocking motor hizlanma/yavaslama rampasi
 - Non-blocking servo hiz siniri: yaklasik 200 derece/saniye
@@ -27,3 +28,7 @@ Bu pinler aracin orijinal kablolamasidir ve firmware degisikliklerinde korunmali
 | Lazer | `2` |
 | Firlaticilar | `11` |
 | Atesleyici | `4` |
+
+## Host regresyon testleri
+
+`./Firmware/tests/run_host_tests.sh` gercek sketch'i etkisiz Arduino/PWMServo taklitleriyle derler ve 16 testi calistirir. Kapsam ve AVR/donanim sinirlari icin [test aciklamasina](tests/README.md) bakin.
